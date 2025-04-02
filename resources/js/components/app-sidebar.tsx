@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, Settings, UserRound, Cuboid } from 'lucide-react';
+import { BookOpen, Folder, LayoutGrid, Settings, UserRound, Cuboid, Tags, Package, List, Store } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -22,6 +22,26 @@ const mainNavItems: NavItem[] = [
         title: 'Danh Mục',
         href: route('categories.index'),
         icon: Folder,
+    },
+    {
+        title: 'Catalogues',
+        href: route('catalogues.index'),
+        icon: Tags,
+    },
+    {
+        title: 'Sản Phẩm',
+        href: route('products.index'),
+        icon: Package,
+    },
+    {
+        title: 'Thuộc Tính',
+        href: route('attributes.index'),
+        icon: List,
+    },
+    {
+        title: 'Gian Hàng',
+        href: route('stores.index'),
+        icon: Store,
     },
     {
         title: 'Cài Đặt',

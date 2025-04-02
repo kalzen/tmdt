@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ChevronFirst, ChevronLast, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 
 interface PaginationProps {
   currentPage: number;
@@ -117,7 +117,7 @@ export function Pagination({
             onClick={() => onPageChange(1)}
             disabled={currentPage === 1}
           >
-            <ChevronFirst className="h-4 w-4" />
+            <ChevronsLeft className="h-4 w-4" />
             <span className="sr-only">Trang đầu</span>
           </Button>
           
@@ -171,7 +171,7 @@ export function Pagination({
             onClick={() => onPageChange(lastPage)}
             disabled={currentPage === lastPage}
           >
-            <ChevronLast className="h-4 w-4" />
+            <ChevronsRight className="h-4 w-4" />
             <span className="sr-only">Trang cuối</span>
           </Button>
         </div>

@@ -13,81 +13,81 @@ class CatalogueSeeder extends Seeder
      */
     public function run(): void
     {
-        // Danh sách các danh mục cấp 0 (Root categories)
+        // List of root categories (level 0)
         $rootCategories = [
             [
-                'name' => 'Điện thoại & Máy tính bảng',
-                'description' => 'Các sản phẩm điện thoại, máy tính bảng và phụ kiện',
-                'meta_title' => 'Điện thoại & Máy tính bảng chính hãng',
-                'meta_description' => 'Mua sắm điện thoại và máy tính bảng chính hãng với giá tốt nhất',
+                'name' => 'Phones & Tablets',
+                'description' => 'Mobile phones, tablets and accessories',
+                'meta_title' => 'Genuine Phones & Tablets',
+                'meta_description' => 'Shop for genuine phones and tablets at the best prices',
                 'position' => 1,
             ],
             [
-                'name' => 'Máy tính & Laptop',
-                'description' => 'Máy tính để bàn, laptop và các thiết bị ngoại vi',
-                'meta_title' => 'Máy tính & Laptop chính hãng',
-                'meta_description' => 'Mua sắm máy tính, laptop và phụ kiện với giá ưu đãi',
+                'name' => 'Computers & Laptops',
+                'description' => 'Desktop computers, laptops and peripherals',
+                'meta_title' => 'Genuine Computers & Laptops',
+                'meta_description' => 'Shop for computers, laptops and accessories at great prices',
                 'position' => 2,
             ],
             [
-                'name' => 'Thiết bị điện tử',
-                'description' => 'Các thiết bị điện tử, thiết bị thông minh',
-                'meta_title' => 'Thiết bị điện tử chính hãng',
-                'meta_description' => 'Mua sắm thiết bị điện tử chính hãng với giá tốt nhất',
+                'name' => 'Electronics',
+                'description' => 'Electronic devices and smart gadgets',
+                'meta_title' => 'Genuine Electronics',
+                'meta_description' => 'Shop for genuine electronic devices at the best prices',
                 'position' => 3,
             ],
             [
-                'name' => 'Điện gia dụng',
-                'description' => 'Các thiết bị điện dùng trong gia đình',
-                'meta_title' => 'Điện gia dụng chính hãng',
-                'meta_description' => 'Mua sắm thiết bị điện gia dụng chính hãng với giá ưu đãi',
+                'name' => 'Home Appliances',
+                'description' => 'Electrical appliances for home use',
+                'meta_title' => 'Genuine Home Appliances',
+                'meta_description' => 'Shop for genuine home appliances at great prices',
                 'position' => 4,
             ],
             [
-                'name' => 'Thời trang nam',
-                'description' => 'Quần áo, giày dép và phụ kiện thời trang cho nam',
-                'meta_title' => 'Thời trang nam chính hãng',
-                'meta_description' => 'Mua sắm thời trang nam chính hãng với giá tốt nhất',
+                'name' => 'Men\'s Fashion',
+                'description' => 'Clothing, footwear and fashion accessories for men',
+                'meta_title' => 'Genuine Men\'s Fashion',
+                'meta_description' => 'Shop for genuine men\'s fashion at the best prices',
                 'position' => 5,
             ],
             [
-                'name' => 'Thời trang nữ',
-                'description' => 'Quần áo, giày dép và phụ kiện thời trang cho nữ',
-                'meta_title' => 'Thời trang nữ chính hãng',
-                'meta_description' => 'Mua sắm thời trang nữ chính hãng với giá ưu đãi',
+                'name' => 'Women\'s Fashion',
+                'description' => 'Clothing, footwear and fashion accessories for women',
+                'meta_title' => 'Genuine Women\'s Fashion',
+                'meta_description' => 'Shop for genuine women\'s fashion at great prices',
                 'position' => 6,
             ],
             [
-                'name' => 'Sắc đẹp',
-                'description' => 'Mỹ phẩm và các sản phẩm chăm sóc sắc đẹp',
-                'meta_title' => 'Mỹ phẩm & Làm đẹp chính hãng',
-                'meta_description' => 'Mua sắm mỹ phẩm và sản phẩm làm đẹp chính hãng',
+                'name' => 'Beauty',
+                'description' => 'Cosmetics and beauty care products',
+                'meta_title' => 'Genuine Beauty & Cosmetics',
+                'meta_description' => 'Shop for genuine cosmetics and beauty products',
                 'position' => 7,
             ],
             [
-                'name' => 'Sức khỏe',
-                'description' => 'Thực phẩm chức năng và sản phẩm chăm sóc sức khỏe',
-                'meta_title' => 'Sản phẩm sức khỏe chính hãng',
-                'meta_description' => 'Mua sắm sản phẩm chăm sóc sức khỏe chính hãng',
+                'name' => 'Health',
+                'description' => 'Supplements and health care products',
+                'meta_title' => 'Genuine Health Products',
+                'meta_description' => 'Shop for genuine health care products',
                 'position' => 8,
             ],
             [
-                'name' => 'Nhà cửa & Đời sống',
-                'description' => 'Đồ dùng gia đình, nội thất và trang trí',
-                'meta_title' => 'Đồ dùng nhà cửa & Đời sống',
-                'meta_description' => 'Mua sắm đồ dùng nhà cửa và đời sống với giá tốt nhất',
+                'name' => 'Home & Living',
+                'description' => 'Household items, furniture and decoration',
+                'meta_title' => 'Home & Living Products',
+                'meta_description' => 'Shop for home and living products at the best prices',
                 'position' => 9,
             ],
             [
-                'name' => 'Thể thao & Du lịch',
-                'description' => 'Dụng cụ thể thao và đồ dùng du lịch',
-                'meta_title' => 'Thể thao & Du lịch chính hãng',
-                'meta_description' => 'Mua sắm dụng cụ thể thao và đồ dùng du lịch chính hãng',
+                'name' => 'Sports & Travel',
+                'description' => 'Sports equipment and travel accessories',
+                'meta_title' => 'Genuine Sports & Travel',
+                'meta_description' => 'Shop for genuine sports equipment and travel accessories',
                 'position' => 10,
             ],
         ];
 
-        // Tạo các danh mục cấp 0 và lưu vào mảng để tạo danh mục con
+        // Create level 0 categories and store them for creating subcategories
         $createdRootCategories = [];
         foreach ($rootCategories as $category) {
             $slug = Str::slug($category['name']);
@@ -97,7 +97,7 @@ class CatalogueSeeder extends Seeder
                 'description' => $category['description'],
                 'meta_title' => $category['meta_title'],
                 'meta_description' => $category['meta_description'],
-                'level' => 0, // Cấp 0
+                'level' => 0, // Level 0
                 'position' => $category['position'],
                 'is_active' => true,
             ]);
@@ -105,11 +105,11 @@ class CatalogueSeeder extends Seeder
             $createdRootCategories[$slug] = $createdCategory;
         }
 
-        // Danh mục cấp 1 cho Điện thoại & Máy tính bảng
-        $this->createSubcategories($createdRootCategories['dien-thoai-may-tinh-bang'], [
+        // Create subcategories for Phones & Tablets
+        $this->createSubcategories($createdRootCategories['phones-tablets'], [
             [
-                'name' => 'Điện thoại di động',
-                'description' => 'Các loại điện thoại di động từ nhiều thương hiệu',
+                'name' => 'Mobile Phones',
+                'description' => 'Various mobile phones from multiple brands',
                 'children' => [
                     'iPhone',
                     'Samsung',
@@ -118,523 +118,524 @@ class CatalogueSeeder extends Seeder
                     'Vivo',
                     'Realme',
                     'Nokia',
-                    'Điện thoại phổ thông',
+                    'Feature Phones',
                 ]
             ],
             [
-                'name' => 'Máy tính bảng',
-                'description' => 'Máy tính bảng các loại',
+                'name' => 'Tablets',
+                'description' => 'Various types of tablets',
                 'children' => [
                     'iPad',
                     'Samsung Galaxy Tab',
                     'Xiaomi Pad',
                     'Lenovo Tab',
-                    'Máy tính bảng giá rẻ',
+                    'Budget Tablets',
                 ]
             ],
             [
-                'name' => 'Phụ kiện điện thoại',
-                'description' => 'Phụ kiện cho điện thoại di động',
+                'name' => 'Phone Accessories',
+                'description' => 'Accessories for mobile phones',
                 'children' => [
-                    'Ốp lưng & Bao da',
-                    'Miếng dán màn hình',
-                    'Cáp & Củ sạc',
-                    'Pin dự phòng',
-                    'Giá đỡ điện thoại',
-                    'Túi chống nước',
+                    'Cases & Covers',
+                    'Screen Protectors',
+                    'Cables & Chargers',
+                    'Power Banks',
+                    'Phone Holders',
+                    'Waterproof Pouches',
                 ]
             ],
             [
-                'name' => 'Phụ kiện máy tính bảng',
-                'description' => 'Phụ kiện cho máy tính bảng',
+                'name' => 'Tablet Accessories',
+                'description' => 'Accessories for tablets',
                 'children' => [
-                    'Bao da & Ốp lưng',
-                    'Bàn phím',
-                    'Bút cảm ứng',
-                    'Đế đỡ & Giá đỡ',
+                    'Cases & Covers',
+                    'Keyboards',
+                    'Stylus Pens',
+                    'Stands & Holders',
                 ]
             ],
         ]);
 
-        // Danh mục cấp 1 cho Máy tính & Laptop
-        $this->createSubcategories($createdRootCategories['may-tinh-laptop'], [
+        // Create subcategories for Computers & Laptops
+        $this->createSubcategories($createdRootCategories['computers-laptops'], [
             [
-                'name' => 'Laptop',
-                'description' => 'Máy tính xách tay các loại',
+                'name' => 'Laptops',
+                'description' => 'Various types of laptops',
                 'children' => [
-                    'Laptop Gaming',
-                    'Laptop Văn phòng',
-                    'Laptop Đồ họa',
-                    'MacBook',
-                    'Ultrabook',
+                    'Gaming Laptops',
+                    'Office Laptops',
+                    'Graphic Design Laptops',
+                    'MacBooks',
+                    'Ultrabooks',
                 ]
             ],
             [
-                'name' => 'Máy tính để bàn',
-                'description' => 'Máy tính để bàn và linh kiện',
+                'name' => 'Desktop Computers',
+                'description' => 'Desktop computers and components',
                 'children' => [
-                    'PC Gaming',
-                    'PC Văn phòng',
-                    'PC Đồ họa',
-                    'PC All-in-one',
+                    'Gaming PCs',
+                    'Office PCs',
+                    'Graphic Design PCs',
+                    'All-in-one PCs',
                 ]
             ],
             [
-                'name' => 'Linh kiện máy tính',
-                'description' => 'Linh kiện và phụ kiện máy tính',
+                'name' => 'Computer Components',
+                'description' => 'Components and accessories for computers',
                 'children' => [
-                    'CPU',
-                    'Mainboard',
+                    'CPUs',
+                    'Motherboards',
                     'RAM',
-                    'Ổ cứng',
-                    'Card màn hình',
-                    'Nguồn máy tính',
-                    'Tản nhiệt',
-                    'Case máy tính',
+                    'Storage Drives',
+                    'Graphics Cards',
+                    'Power Supplies',
+                    'Cooling Systems',
+                    'Computer Cases',
                 ]
             ],
             [
-                'name' => 'Màn hình',
-                'description' => 'Màn hình máy tính các loại',
+                'name' => 'Monitors',
+                'description' => 'Various types of computer monitors',
                 'children' => [
-                    'Màn hình Gaming',
-                    'Màn hình Đồ họa',
-                    'Màn hình Văn phòng',
-                    'Màn hình Cong',
+                    'Gaming Monitors',
+                    'Graphic Design Monitors',
+                    'Office Monitors',
+                    'Curved Monitors',
                 ]
             ],
             [
-                'name' => 'Thiết bị mạng',
-                'description' => 'Thiết bị mạng các loại',
+                'name' => 'Networking Equipment',
+                'description' => 'Various networking devices',
                 'children' => [
-                    'Router',
-                    'Switch',
-                    'Bộ kích sóng',
-                    'Bộ phát Wifi',
-                    'Card mạng',
-                ]
-            ],
-        ]);
-
-        // Danh mục cấp 1 cho Thiết bị điện tử
-        $this->createSubcategories($createdRootCategories['thiet-bi-dien-tu'], [
-            [
-                'name' => 'Tivi & Màn hình',
-                'description' => 'Tivi và màn hình lớn',
-                'children' => [
-                    'Smart TV',
-                    'Android TV',
-                    'Tivi 4K',
-                    'Tivi 8K',
-                    'Tivi QLED',
-                    'Tivi OLED',
-                ]
-            ],
-            [
-                'name' => 'Âm thanh',
-                'description' => 'Thiết bị âm thanh và giải trí',
-                'children' => [
-                    'Loa Bluetooth',
-                    'Loa thanh',
-                    'Tai nghe',
-                    'Micro',
-                    'Amply',
-                ]
-            ],
-            [
-                'name' => 'Máy ảnh & Máy quay',
-                'description' => 'Thiết bị chụp hình và quay phim',
-                'children' => [
-                    'Máy ảnh DSLR',
-                    'Máy ảnh Mirrorless',
-                    'Máy ảnh Compact',
-                    'Camera hành trình',
-                    'Camera an ninh',
-                    'Phụ kiện máy ảnh',
-                ]
-            ],
-            [
-                'name' => 'Thiết bị thông minh',
-                'description' => 'Các thiết bị điện tử thông minh',
-                'children' => [
-                    'Đồng hồ thông minh',
-                    'Vòng đeo tay thông minh',
-                    'Thiết bị đeo',
-                    'Nhà thông minh',
-                    'Thiết bị điều khiển',
+                    'Routers',
+                    'Switches',
+                    'Range Extenders',
+                    'Wifi Transmitters',
+                    'Network Cards',
                 ]
             ],
         ]);
 
-        // Danh mục cấp 1 cho Điện gia dụng
-        $this->createSubcategories($createdRootCategories['dien-gia-dung'], [
+        // Create subcategories for Electronics
+        $this->createSubcategories($createdRootCategories['electronics'], [
             [
-                'name' => 'Đồ dùng nhà bếp',
-                'description' => 'Thiết bị điện dùng trong nhà bếp',
+                'name' => 'TVs & Displays',
+                'description' => 'TVs and large displays',
                 'children' => [
-                    'Nồi cơm điện',
-                    'Bếp điện',
-                    'Lò vi sóng',
-                    'Lò nướng',
-                    'Máy xay sinh tố',
-                    'Máy ép trái cây',
-                    'Máy làm bánh',
-                    'Ấm đun nước',
+                    'Smart TVs',
+                    'Android TVs',
+                    '4K TVs',
+                    '8K TVs',
+                    'QLED TVs',
+                    'OLED TVs',
                 ]
             ],
             [
-                'name' => 'Thiết bị gia đình',
-                'description' => 'Thiết bị điện dùng trong gia đình',
+                'name' => 'Audio Equipment',
+                'description' => 'Audio equipment and entertainment devices',
                 'children' => [
-                    'Máy giặt',
-                    'Máy sấy',
-                    'Tủ lạnh',
-                    'Tủ đông',
-                    'Máy rửa chén',
-                    'Máy hút bụi',
-                    'Quạt điện',
+                    'Bluetooth Speakers',
+                    'Soundbars',
+                    'Headphones',
+                    'Microphones',
+                    'Amplifiers',
                 ]
             ],
             [
-                'name' => 'Điều hòa & Sưởi ấm',
-                'description' => 'Thiết bị điều hòa nhiệt độ',
+                'name' => 'Cameras & Camcorders',
+                'description' => 'Photography and videography equipment',
                 'children' => [
-                    'Máy điều hòa',
-                    'Máy sưởi',
-                    'Máy phun sương',
-                    'Máy tạo ẩm',
-                    'Máy hút ẩm',
+                    'DSLR Cameras',
+                    'Mirrorless Cameras',
+                    'Compact Cameras',
+                    'Action Cameras',
+                    'Security Cameras',
+                    'Camera Accessories',
                 ]
             ],
             [
-                'name' => 'Chăm sóc cá nhân',
-                'description' => 'Thiết bị chăm sóc cá nhân',
+                'name' => 'Smart Devices',
+                'description' => 'Smart electronic devices',
                 'children' => [
-                    'Máy sấy tóc',
-                    'Máy cạo râu',
-                    'Máy tạo kiểu tóc',
-                    'Máy rửa mặt',
-                    'Máy massage',
+                    'Smartwatches',
+                    'Smart Bands',
+                    'Wearable Devices',
+                    'Smart Home Devices',
+                    'Remote Controllers',
                 ]
             ],
         ]);
 
-        // Danh mục cấp 1 cho Thời trang nam
-        $this->createSubcategories($createdRootCategories['thoi-trang-nam'], [
+        // Create subcategories for Home Appliances
+        $this->createSubcategories($createdRootCategories['home-appliances'], [
             [
-                'name' => 'Quần áo nam',
-                'description' => 'Quần áo dành cho nam giới',
+                'name' => 'Kitchen Appliances',
+                'description' => 'Electrical appliances for kitchen use',
                 'children' => [
-                    'Áo thun',
-                    'Áo sơ mi',
-                    'Áo khoác',
-                    'Quần jeans',
-                    'Quần kaki',
-                    'Quần short',
-                    'Đồ lót',
-                    'Đồ thể thao',
+                    'Rice Cookers',
+                    'Electric Stoves',
+                    'Microwave Ovens',
+                    'Ovens',
+                    'Blenders',
+                    'Juicers',
+                    'Bread Makers',
+                    'Electric Kettles',
                 ]
             ],
             [
-                'name' => 'Giày dép nam',
-                'description' => 'Giày dép dành cho nam giới',
+                'name' => 'Home Equipment',
+                'description' => 'Electrical appliances for home use',
                 'children' => [
-                    'Giày thể thao',
-                    'Giày tây',
-                    'Giày lười',
-                    'Dép & Sandal',
-                    'Giày đá bóng',
+                    'Washing Machines',
+                    'Dryers',
+                    'Refrigerators',
+                    'Freezers',
+                    'Dishwashers',
+                    'Vacuum Cleaners',
+                    'Electric Fans',
                 ]
             ],
             [
-                'name' => 'Phụ kiện thời trang nam',
-                'description' => 'Phụ kiện thời trang cho nam giới',
+                'name' => 'Climate Control',
+                'description' => 'Temperature control devices',
                 'children' => [
-                    'Đồng hồ',
-                    'Ví',
-                    'Thắt lưng',
-                    'Mũ & Nón',
-                    'Kính mát',
-                    'Cà vạt & Nơ',
-                    'Trang sức nam',
+                    'Air Conditioners',
+                    'Heaters',
+                    'Mist Sprayers',
+                    'Humidifiers',
+                    'Dehumidifiers',
                 ]
             ],
             [
-                'name' => 'Túi xách nam',
-                'description' => 'Túi xách dành cho nam giới',
+                'name' => 'Personal Care Appliances',
+                'description' => 'Personal care devices',
                 'children' => [
-                    'Túi đeo chéo',
-                    'Túi xách tay',
-                    'Balo',
-                    'Túi laptop',
-                    'Vali & Túi du lịch',
+                    'Hair Dryers',
+                    'Electric Shavers',
+                    'Hair Styling Tools',
+                    'Facial Cleansers',
+                    'Massage Devices',
                 ]
             ],
         ]);
 
-        // Danh mục cấp 1 cho Thời trang nữ
-        $this->createSubcategories($createdRootCategories['thoi-trang-nu'], [
+        // Create subcategories for Men's Fashion
+        $this->createSubcategories($createdRootCategories['mens-fashion'], [
             [
-                'name' => 'Quần áo nữ',
-                'description' => 'Quần áo dành cho nữ giới',
+                'name' => 'Men\'s Clothing',
+                'description' => 'Clothing for men',
                 'children' => [
-                    'Áo thun & Áo phông',
-                    'Áo sơ mi',
-                    'Áo khoác',
-                    'Váy đầm',
-                    'Quần jeans',
-                    'Quần dài',
-                    'Quần short',
-                    'Đồ lót',
-                    'Đồ ngủ',
-                    'Đồ thể thao',
+                    'T-shirts',
+                    'Shirts',
+                    'Jackets',
+                    'Jeans',
+                    'Khakis',
+                    'Shorts',
+                    'Underwear',
+                    'Sportswear',
                 ]
             ],
             [
-                'name' => 'Giày dép nữ',
-                'description' => 'Giày dép dành cho nữ giới',
+                'name' => 'Men\'s Footwear',
+                'description' => 'Footwear for men',
                 'children' => [
-                    'Giày cao gót',
-                    'Giày đế bằng',
-                    'Giày thể thao',
-                    'Giày búp bê',
-                    'Dép & Sandal',
+                    'Sneakers',
+                    'Dress Shoes',
+                    'Loafers',
+                    'Sandals & Flip Flops',
+                    'Soccer Shoes',
+                ]
+            ],
+            [
+                'name' => 'Men\'s Accessories',
+                'description' => 'Fashion accessories for men',
+                'children' => [
+                    'Watches',
+                    'Wallets',
+                    'Belts',
+                    'Hats & Caps',
+                    'Sunglasses',
+                    'Ties & Bow Ties',
+                    'Men\'s Jewelry',
+                ]
+            ],
+            [
+                'name' => 'Men\'s Bags',
+                'description' => 'Bags for men',
+                'children' => [
+                    'Crossbody Bags',
+                    'Handbags',
+                    'Backpacks',
+                    'Laptop Bags',
+                    'Luggage & Travel Bags',
+                ]
+            ],
+        ]);
+
+        // Create subcategories for Women's Fashion
+        $this->createSubcategories($createdRootCategories['womens-fashion'], [
+            [
+                'name' => 'Women\'s Clothing',
+                'description' => 'Clothing for women',
+                'children' => [
+                    'T-shirts & Tops',
+                    'Blouses',
+                    'Jackets',
+                    'Dresses',
+                    'Jeans',
+                    'Pants',
+                    'Shorts',
+                    'Underwear',
+                    'Sleepwear',
+                    'Sportswear',
+                ]
+            ],
+            [
+                'name' => 'Women\'s Footwear',
+                'description' => 'Footwear for women',
+                'children' => [
+                    'Heels',
+                    'Flats',
+                    'Sneakers',
+                    'Ballet Flats',
+                    'Sandals & Flip Flops',
                     'Boots',
                 ]
             ],
             [
-                'name' => 'Phụ kiện thời trang nữ',
-                'description' => 'Phụ kiện thời trang cho nữ giới',
+                'name' => 'Women\'s Accessories',
+                'description' => 'Fashion accessories for women',
                 'children' => [
-                    'Đồng hồ',
-                    'Trang sức',
-                    'Kính mát',
-                    'Mũ & Nón',
-                    'Khăn quàng cổ',
-                    'Găng tay',
-                    'Phụ kiện tóc',
+                    'Watches',
+                    'Jewelry',
+                    'Sunglasses',
+                    'Hats & Caps',
+                    'Scarves',
+                    'Gloves',
+                    'Hair Accessories',
                 ]
             ],
             [
-                'name' => 'Túi xách nữ',
-                'description' => 'Túi xách dành cho nữ giới',
+                'name' => 'Women\'s Bags',
+                'description' => 'Bags for women',
                 'children' => [
-                    'Túi xách tay',
-                    'Túi đeo chéo',
-                    'Túi tote',
-                    'Balo nữ',
-                    'Ví cầm tay',
-                    'Túi du lịch',
-                ]
-            ],
-        ]);
-
-        // Tương tự cho các danh mục khác: Sắc đẹp, Sức khỏe, Nhà cửa, Thể thao
-        // Tạo danh mục cấp 1 cho Sắc đẹp
-        $this->createSubcategories($createdRootCategories['sac-dep'], [
-            [
-                'name' => 'Chăm sóc da mặt',
-                'description' => 'Sản phẩm chăm sóc da mặt',
-                'children' => [
-                    'Sữa rửa mặt',
-                    'Toner',
-                    'Serum',
-                    'Kem dưỡng',
-                    'Mặt nạ',
-                    'Tẩy trang',
-                    'Chống nắng',
-                ]
-            ],
-            [
-                'name' => 'Trang điểm',
-                'description' => 'Sản phẩm trang điểm',
-                'children' => [
-                    'Kem nền & Cushion',
-                    'Phấn phủ',
-                    'Son môi',
-                    'Mascara',
-                    'Phấn mắt',
-                    'Kẻ mắt',
-                    'Che khuyết điểm',
-                ]
-            ],
-            [
-                'name' => 'Chăm sóc cơ thể',
-                'description' => 'Sản phẩm chăm sóc cơ thể',
-                'children' => [
-                    'Sữa tắm',
-                    'Kem dưỡng thể',
-                    'Tẩy tế bào chết',
-                    'Xịt thơm',
-                    'Sản phẩm khử mùi',
-                ]
-            ],
-            [
-                'name' => 'Chăm sóc tóc',
-                'description' => 'Sản phẩm chăm sóc tóc',
-                'children' => [
-                    'Dầu gội',
-                    'Dầu xả',
-                    'Kem ủ tóc',
-                    'Serum dưỡng tóc',
-                    'Thuốc nhuộm tóc',
+                    'Handbags',
+                    'Crossbody Bags',
+                    'Tote Bags',
+                    'Women\'s Backpacks',
+                    'Clutches',
+                    'Travel Bags',
                 ]
             ],
         ]);
 
-        // Tạo danh mục cấp 1 cho Sức khỏe
-        $this->createSubcategories($createdRootCategories['suc-khoe'], [
+        // Create subcategories for Beauty
+        $this->createSubcategories($createdRootCategories['beauty'], [
             [
-                'name' => 'Thực phẩm chức năng',
-                'description' => 'Thực phẩm bổ sung',
+                'name' => 'Skincare',
+                'description' => 'Facial skincare products',
                 'children' => [
-                    'Vitamin & Khoáng chất',
-                    'Hỗ trợ tim mạch',
-                    'Hỗ trợ xương khớp',
-                    'Tăng cường miễn dịch',
-                    'Hỗ trợ tiêu hóa',
+                    'Cleansers',
+                    'Toners',
+                    'Serums',
+                    'Moisturizers',
+                    'Face Masks',
+                    'Makeup Removers',
+                    'Sunscreens',
                 ]
             ],
             [
-                'name' => 'Dụng cụ y tế',
-                'description' => 'Thiết bị và dụng cụ y tế',
+                'name' => 'Makeup',
+                'description' => 'Makeup products',
                 'children' => [
-                    'Máy đo huyết áp',
-                    'Máy đo đường huyết',
-                    'Nhiệt kế',
-                    'Băng gạc & Băng keo',
-                    'Khẩu trang y tế',
+                    'Foundations & Cushions',
+                    'Powders',
+                    'Lipsticks',
+                    'Mascaras',
+                    'Eyeshadows',
+                    'Eyeliners',
+                    'Concealers',
                 ]
             ],
             [
-                'name' => 'Chăm sóc cá nhân',
-                'description' => 'Sản phẩm vệ sinh cá nhân',
+                'name' => 'Body Care',
+                'description' => 'Body care products',
                 'children' => [
-                    'Bàn chải & Kem đánh răng',
-                    'Sản phẩm vệ sinh phụ nữ',
-                    'Băng vệ sinh',
-                    'Giấy vệ sinh',
-                    'Tã người lớn',
+                    'Shower Gels',
+                    'Body Lotions',
+                    'Body Scrubs',
+                    'Body Sprays',
+                    'Deodorants',
                 ]
             ],
             [
-                'name' => 'Thể thao & Fitness',
-                'description' => 'Sản phẩm hỗ trợ thể thao',
+                'name' => 'Hair Care',
+                'description' => 'Hair care products',
                 'children' => [
-                    'Protein & Sữa tăng cơ',
-                    'Đai và băng hỗ trợ',
-                    'Thực phẩm Eat Clean',
-                    'Thực phẩm Keto',
-                ]
-            ],
-        ]);
-
-        // Tạo danh mục cấp 1 cho Nhà cửa & Đời sống
-        $this->createSubcategories($createdRootCategories['nha-cua-doi-song'], [
-            [
-                'name' => 'Nội thất',
-                'description' => 'Nội thất và đồ trang trí',
-                'children' => [
-                    'Bàn & Ghế',
-                    'Giường & Nệm',
-                    'Tủ & Kệ',
-                    'Sofa & Đồ ngồi',
-                    'Đèn trang trí',
-                    'Tranh & Khung ảnh',
-                ]
-            ],
-            [
-                'name' => 'Đồ dùng nhà bếp',
-                'description' => 'Vật dụng nhà bếp',
-                'children' => [
-                    'Nồi & Chảo',
-                    'Dao, Thớt & Dụng cụ',
-                    'Đồ dùng bàn ăn',
-                    'Hộp đựng thực phẩm',
-                    'Đồ dùng uống trà, cà phê',
-                ]
-            ],
-            [
-                'name' => 'Đồ dùng phòng tắm',
-                'description' => 'Vật dụng phòng tắm',
-                'children' => [
-                    'Khăn tắm & Khăn mặt',
-                    'Vòi sen & Phụ kiện',
-                    'Kệ & Giá để đồ',
-                    'Rèm phòng tắm',
-                    'Thảm chùi chân',
-                ]
-            ],
-            [
-                'name' => 'Đồ dùng phòng ngủ',
-                'description' => 'Vật dụng phòng ngủ',
-                'children' => [
-                    'Chăn, ga, gối, nệm',
-                    'Rèm cửa',
-                    'Đèn ngủ',
-                    'Thảm trải sàn',
+                    'Shampoos',
+                    'Conditioners',
+                    'Hair Masks',
+                    'Hair Serums',
+                    'Hair Dyes',
                 ]
             ],
         ]);
 
-        // Tạo danh mục cấp 1 cho Thể thao & Du lịch
-        $this->createSubcategories($createdRootCategories['the-thao-du-lich'], [
+        // Create subcategories for Health
+        $this->createSubcategories($createdRootCategories['health'], [
             [
-                'name' => 'Dụng cụ thể thao',
-                'description' => 'Dụng cụ tập luyện thể thao',
+                'name' => 'Supplements',
+                'description' => 'Dietary supplements',
                 'children' => [
-                    'Dụng cụ tập Gym',
+                    'Vitamins & Minerals',
+                    'Heart Health',
+                    'Bone & Joint',
+                    'Immune Support',
+                    'Digestive Health',
+                ]
+            ],
+            [
+                'name' => 'Medical Equipment',
+                'description' => 'Medical devices and equipment',
+                'children' => [
+                    'Blood Pressure Monitors',
+                    'Glucose Meters',
+                    'Thermometers',
+                    'Bandages & Tape',
+                    'Medical Masks',
+                ]
+            ],
+            [
+                'name' => 'Personal Hygiene',
+                'description' => 'Personal hygiene products',
+                'children' => [
+                    'Toothbrushes & Toothpaste',
+                    'Feminine Hygiene',
+                    'Sanitary Pads',
+                    'Toilet Paper',
+                    'Adult Diapers',
+                ]
+            ],
+            [
+                'name' => 'Sports & Fitness',
+                'description' => 'Sports support products',
+                'children' => [
+                    'Protein & Muscle Gain',
+                    'Support Belts & Braces',
+                    'Clean Eating Foods',
+                    'Keto Foods',
+                ]
+            ],
+        ]);
+
+        // Create subcategories for Home & Living
+        $this->createSubcategories($createdRootCategories['home-living'], [
+            [
+                'name' => 'Furniture',
+                'description' => 'Furniture and decorative items',
+                'children' => [
+                    'Tables & Chairs',
+                    'Beds & Mattresses',
+                    'Cabinets & Shelves',
+                    'Sofas & Seating',
+                    'Decorative Lights',
+                    'Paintings & Frames',
+                ]
+            ],
+            [
+                'name' => 'Kitchenware',
+                'description' => 'Kitchen utensils',
+                'children' => [
+                    'Pots & Pans',
+                    'Knives, Cutting Boards & Tools',
+                    'Tableware',
+                    'Food Containers',
+                    'Tea & Coffee Accessories',
+                ]
+            ],
+            [
+                'name' => 'Bathroom Supplies',
+                'description' => 'Bathroom items',
+                'children' => [
+                    'Bath Towels & Face Towels',
+                    'Shower Heads & Accessories',
+                    'Storage Racks & Shelves',
+                    'Shower Curtains',
+                    'Bath Mats',
+                ]
+            ],
+            [
+                'name' => 'Bedroom Items',
+                'description' => 'Bedroom items',
+                'children' => [
+                    'Bedding Sets',
+                    'Curtains',
+                    'Night Lights',
+                    'Floor Mats',
+                ]
+            ],
+        ]);
+
+        // Create subcategories for Sports & Travel
+        $this->createSubcategories($createdRootCategories['sports-travel'], [
+            [
+                'name' => 'Sports Equipment',
+                'description' => 'Sports training equipment',
+                'children' => [
+                    'Gym Equipment',
                     'Yoga & Pilates',
-                    'Bóng đá',
-                    'Bóng rổ',
-                    'Tennis & Cầu lông',
-                    'Bơi lội',
+                    'Soccer',
+                    'Basketball',
+                    'Tennis & Badminton',
+                    'Swimming',
                 ]
             ],
             [
-                'name' => 'Thời trang thể thao',
-                'description' => 'Trang phục thể thao',
+                'name' => 'Sports Apparel',
+                'description' => 'Sports clothing',
                 'children' => [
-                    'Áo thể thao',
-                    'Quần thể thao',
-                    'Đồ bơi',
-                    'Giày thể thao',
-                    'Tất thể thao',
+                    'Sports Shirts',
+                    'Sports Pants',
+                    'Swimwear',
+                    'Sports Shoes',
+                    'Sports Socks',
                 ]
             ],
             [
-                'name' => 'Đồ dùng du lịch',
-                'description' => 'Vật dụng phục vụ du lịch',
+                'name' => 'Travel Accessories',
+                'description' => 'Travel items',
                 'children' => [
-                    'Vali & Túi du lịch',
-                    'Balo & Túi đeo chéo',
-                    'Phụ kiện du lịch',
-                    'Lều & Đồ cắm trại',
-                    'Đồ dùng dã ngoại',
+                    'Suitcases & Travel Bags',
+                    'Backpacks & Crossbody Bags',
+                    'Travel Accessories',
+                    'Tents & Camping Equipment',
+                    'Outdoor Gear',
                 ]
             ],
             [
-                'name' => 'Xe đạp & Phụ kiện',
-                'description' => 'Xe đạp và phụ kiện đi kèm',
+                'name' => 'Bicycles & Accessories',
+                'description' => 'Bicycles and related accessories',
                 'children' => [
-                    'Xe đạp',
-                    'Mũ bảo hiểm',
-                    'Phụ kiện xe đạp',
-                    'Phụ tùng thay thế',
-                    'Đồ bảo hộ',
+                    'Bicycles',
+                    'Helmets',
+                    'Bicycle Accessories',
+                    'Replacement Parts',
+                    'Protective Gear',
                 ]
             ],
         ]);
     }
 
     /**
-     * Tạo danh mục con (cấp 1) và cháu (cấp 2)
+     * Create subcategories (level 1) and child categories (level 2)
      */
     private function createSubcategories($parentCategory, $subcategories, $level = 1): void
     {
         $position = 1;
         foreach ($subcategories as $subcategory) {
-            $slug = Str::slug($subcategory['name']);
+            // Create unique slug by combining with parent category slug
+            $slug = Str::slug($parentCategory->slug . '-' . $subcategory['name']);
+            
             $newCategory = Catalogue::create([
                 'name' => $subcategory['name'],
                 'slug' => $slug,
@@ -643,27 +644,29 @@ class CatalogueSeeder extends Seeder
                 'level' => $level,
                 'position' => $position,
                 'is_active' => true,
-                'meta_title' => $subcategory['name'] . ' chính hãng, giá tốt',
-                'meta_description' => 'Mua sắm ' . $subcategory['name'] . ' chính hãng với giá tốt nhất',
+                'meta_title' => $subcategory['name'] . ' - Genuine Products',
+                'meta_description' => 'Shop for genuine ' . $subcategory['name'] . ' at the best prices',
             ]);
             
             $position++;
             
-            // Tạo danh mục cấp 2 nếu có
+            // Create level 2 categories if available
             if (isset($subcategory['children']) && is_array($subcategory['children'])) {
                 $childPosition = 1;
                 foreach ($subcategory['children'] as $childName) {
-                    $childSlug = Str::slug($childName);
+                    // Create unique slug for level 2 by combining with level 1 slug
+                    $childSlug = Str::slug($newCategory->slug . '-' . $childName);
+                    
                     Catalogue::create([
                         'name' => $childName,
                         'slug' => $childSlug,
-                        'description' => 'Danh mục ' . $childName,
+                        'description' => $childName . ' category',
                         'parent_id' => $newCategory->id,
                         'level' => $level + 1,
                         'position' => $childPosition,
                         'is_active' => true,
-                        'meta_title' => $childName . ' chính hãng, giá tốt',
-                        'meta_description' => 'Mua sắm ' . $childName . ' chính hãng với giá tốt nhất',
+                        'meta_title' => $childName . ' - Genuine Products',
+                        'meta_description' => 'Shop for genuine ' . $childName . ' at the best prices',
                     ]);
                     
                     $childPosition++;

@@ -18,21 +18,15 @@ interface FlashMessages {
     [key: string]: any;
 }
 
-// Cách tiếp cận đơn giản hơn để xử lý kiểu dữ liệu
-export default ({ children, breadcrumbs, ...props }: AppLayoutProps) => {
-    // Sử dụng usePage với any để tránh lỗi TypeScript
+export default function AppLayout({ children, breadcrumbs = [] }: AppLayoutProps) {
+    // Sử dụng usePage với type assertion để tránh lỗi TypeScript
     const page = usePage();
     const flash = page.props.flash as FlashMessages | undefined;
-    
-    // Thêm console.log để kiểm tra
-    console.log('Flash message data:', flash);
     
     useEffect(() => {
         if (flash && flash.toast) {
             const type = flash['toast.type'] || 'default';
             const message = flash['toast.message'] || '';
-            
-            console.log('Attempting to show toast:', { type, message });
             
             if (message) {
                 if (type === 'success') {
@@ -51,9 +45,9 @@ export default ({ children, breadcrumbs, ...props }: AppLayoutProps) => {
     }, [flash]);
     
     return (
-        <AppLayoutTemplate breadcrumbs={breadcrumbs} {...props}>
+        <AppLayoutTemplate breadcrumbs={breadcrumbs}>
             {children}
             <Toaster position="top-right" />
         </AppLayoutTemplate>
     );
-};
+}

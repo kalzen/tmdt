@@ -25,6 +25,7 @@ class Product extends Model implements HasMedia
         'stock_quantity',
         'catalogue_id',
         'user_id',
+        'store_id', // Thêm store_id
         'views',
         'is_active',
         'is_featured',
@@ -46,6 +47,14 @@ class Product extends Model implements HasMedia
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Lấy thông tin gian hàng của sản phẩm
+     */
+    public function store(): BelongsTo
+    {
+        return $this->belongsTo(Store::class);
     }
 
     /**

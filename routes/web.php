@@ -14,17 +14,35 @@ use App\Http\Controllers\BlockItemController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\LanguageController;
+use App\Http\Controllers\CatalogueController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\AttributeController;
+use App\Http\Controllers\StoreController;
 
-Route::get('/', [FrontendController::class, 'index'])->name('home');
+Route::get('/', function () {
+    return view('welcome');
+})->name('home');
 Route::get('/posts/{slug}', [FrontendController::class, 'showPost'])->name('post.show');
 
 // Contact routes
 Route::get('/lien-he', [ContactController::class, 'index'])->name('contact.index');
 Route::post('/lien-he/submit', [ContactController::class, 'submit'])->name('contact.submit');
 
+// Language switch route
+Route::get('/language/{locale}', [LanguageController::class, 'switch'])
+    ->name('language.switch')
+    ->where('locale', 'en|vi');
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('posts', PostController::class);
+    Route::resource('catalogues', CatalogueController::class);
+    Route::resource('products', ProductController::class);
+    
+    // Thêm route xóa media của sản phẩm
+    Route::post('products/{product}/delete-media', [ProductController::class, 'deleteMedia'])
+        ->name('products.delete-media');
     
     // Thêm routes cho Config
     Route::resource('configs', ConfigController::class)->except(['show']);
@@ -47,6 +65,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('block-items/{item}', [BlockItemController::class, 'update'])->name('block-items.update');
     Route::delete('block-items/{item}', [BlockItemController::class, 'destroy'])->name('block-items.destroy');
     Route::post('block-items/reorder', [BlockItemController::class, 'reorder'])->name('block-items.reorder');
+    
+    // Attribute routes
+    Route::resource('attributes', AttributeController::class);
+    
+    // Store routes
+    Route::resource('stores', StoreController::class);
 });
 
 // Thêm route nhóm cho sliders

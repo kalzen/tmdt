@@ -1,18 +1,22 @@
 import HeadingSmall from '@/components/heading-small';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Pagination } from '@/components/ui/pagination';
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Danh mục',
-        href: route('categories.index'),
-    },
-];
+// Helper function for translations
+function __(key: string, defaultValue: string): string {
+    try {
+        const page = usePage();
+        const translations = page.props.translations as Record<string, string> | undefined;
+        return translations && translations[key] ? translations[key] : defaultValue;
+    } catch (error) {
+        return defaultValue;
+    }
+}
 
 interface Category {
     id: number;
@@ -44,6 +48,14 @@ interface Props {
 export default function Categories({ categories, filters }: Props) {
     const [searchQuery, setSearchQuery] = useState(filters.search || '');
 
+    // Tạo breadcrumbs trong component
+    const breadcrumbs: BreadcrumbItem[] = [
+        {
+            title: __('admin.categories', 'Categories'),
+            href: route('categories.index'),
+        },
+    ];
+
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
         router.get(route('categories.index'), { search: searchQuery }, { preserveState: true });
@@ -59,41 +71,41 @@ export default function Categories({ categories, filters }: Props) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Danh mục" />
+            <Head title={__('admin.categories', 'Categories')} />
             
             <div className="space-y-6 px-4 py-6">
                 <div className="flex items-center justify-between pb-4 border-b">
                     <HeadingSmall 
-                        title="Quản lý danh mục" 
-                        description="Tạo, chỉnh sửa và quản lý danh mục cho bài viết" 
+                        title={__('admin.categories', 'Categories')} 
+                        description={__('admin.categories_description', 'Create, edit and manage categories for posts')} 
                     />
                     
                     <Link href={route('categories.create')}>
-                        <Button>Thêm danh mục mới</Button>
+                        <Button>{__('admin.create_category', 'Create Category')}</Button>
                     </Link>
                 </div>
                 
-                {/* Thêm thanh tìm kiếm */}
+                {/* Search bar */}
                 <div className="flex flex-wrap gap-4 items-center">
                     <form onSubmit={handleSearch} className="flex-1 max-w-sm">
                         <div className="relative flex items-center">
                             <Input
                                 type="search"
-                                placeholder="Tìm kiếm danh mục..."
+                                placeholder={__('admin.search_categories', 'Search categories...')}
                                 className="pl-4 pr-12"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
                             <Button type="submit" size="sm" variant="ghost" className="absolute right-0">
-                                Tìm
+                                {__('admin.search', 'Search')}
                             </Button>
                         </div>
                     </form>
                     
-                    {/* Nút xóa bộ lọc */}
+                    {/* Clear filters button */}
                     {filters.search && (
                         <Button variant="ghost" onClick={() => router.get(route('categories.index'), {})}>
-                            Xóa bộ lọc
+                            {__('admin.clear_filters', 'Clear filters')}
                         </Button>
                     )}
                 </div>
