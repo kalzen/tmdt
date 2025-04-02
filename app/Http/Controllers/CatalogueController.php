@@ -265,18 +265,7 @@ class CatalogueController extends Controller
     public function destroy(Catalogue $catalogue)
     {
         try {
-            // Kiểm tra xem danh mục có con không
-            $hasChildren = $catalogue->children()->exists();
-            
-            if ($hasChildren) {
-                return back()->with([
-                    'toast' => true,
-                    'toast.type' => 'error',
-                    'toast.message' => 'Cannot delete catalogue with children. Please delete all children first.'
-                ]);
-            }
-            
-            // Kiểm tra xem danh mục có sản phẩm không
+            // Check if catalogue has products
             $hasProducts = $catalogue->products()->exists();
             
             if ($hasProducts) {
@@ -287,16 +276,13 @@ class CatalogueController extends Controller
                 ]);
             }
             
-            // Xóa media
-            $catalogue->clearMediaCollection('thumbnail');
-            
-            // Xóa danh mục
-            $catalogue->delete();
+            // Delete the catalogue and all its children recursively
+            $this->deleteCatalogueRecursively($catalogue);
             
             return Redirect::route('catalogues.index')->with([
                 'toast' => true,
                 'toast.type' => 'success',
-                'toast.message' => 'Catalogue deleted successfully!'
+                'toast.message' => 'Catalogue and all its subcategories deleted successfully!'
             ]);
         } catch (\Exception $e) {
             Log::error('Error deleting catalogue: ' . $e->getMessage());
@@ -307,5 +293,33 @@ class CatalogueController extends Controller
                 'toast.message' => 'Error deleting catalogue: ' . $e->getMessage()
             ]);
         }
+    }
+    
+    /**
+     * Recursively delete a catalogue and all its children.
+     * 
+     * @param Catalogue $catalogue
+     * @return void
+     */
+    private function deleteCatalogueRecursively(Catalogue $catalogue)
+    {
+        // Get all direct children
+        $children = Catalogue::where('parent_id', $catalogue->id)->get();
+        
+        // Recursively delete all children first
+        foreach ($children as $child) {
+            // Check if child has products
+            if ($child->products()->exists()) {
+                throw new \Exception('Cannot delete catalogue "' . $child->name . '" because it has associated products.');
+            }
+            
+            $this->deleteCatalogueRecursively($child);
+        }
+        
+        // Clear media
+        $catalogue->clearMediaCollection('thumbnail');
+        
+        // Delete the catalogue itself
+        $catalogue->delete();
     }
 }
