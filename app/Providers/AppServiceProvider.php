@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\App;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\File;
+use App\Helpers\ConfigHelper;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -61,6 +62,13 @@ class AppServiceProvider extends ServiceProvider
                 
                 // Trả về object rỗng nếu không có bản dịch để tránh lỗi
                 return $translations ?: (object) [];
+            },
+        ]);
+
+        // Share site configuration with all views
+        Inertia::share([
+            'site' => function () {
+                return ConfigHelper::getSiteInfo();
             },
         ]);
     }

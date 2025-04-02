@@ -25,12 +25,19 @@ class Product extends Model implements HasMedia
         'stock_quantity',
         'catalogue_id',
         'user_id',
-        'store_id', // Thêm store_id
-        'views',
+        'store_id',
         'is_active',
         'is_featured',
         'meta_title',
         'meta_description',
+    ];
+
+    protected $casts = [
+        'price' => 'float',
+        'sale_price' => 'float',
+        'stock_quantity' => 'integer',
+        'is_active' => 'boolean',
+        'is_featured' => 'boolean',
     ];
 
     /**
@@ -39,6 +46,14 @@ class Product extends Model implements HasMedia
     public function catalogue(): BelongsTo
     {
         return $this->belongsTo(Catalogue::class);
+    }
+
+    /**
+     * Get the catalogues for the product.
+     */
+    public function catalogues()
+    {
+        return $this->belongsToMany(Catalogue::class, 'product_catalogues', 'product_id', 'catalogue_id');
     }
 
     /**

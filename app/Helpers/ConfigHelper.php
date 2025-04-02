@@ -7,18 +7,54 @@ use Illuminate\Support\Facades\Cache;
 
 class ConfigHelper
 {
-    public static function get(string $name, $default = null)
+    /**
+     * Get config value by key
+     *
+     * @param string $key
+     * @param mixed $default
+     * @return mixed
+     */
+    public static function get($key, $default = null)
     {
-        // Try to get from cache first
-        $configs = Cache::rememberForever('site-configs', function () {
-            return Config::all()->keyBy('name');
+        // Cache config values for 60 minutes to avoid hitting database on every request
+        $cacheKey = 'config_' . $key;
+        
+        return Cache::remember($cacheKey, 60 * 60, function () use ($key, $default) {
+            $config = Config::where('name', $key)->first();
+            return $config ? $config->value : $default;
         });
+    }
 
-        if (isset($configs[$name])) {
-            return $configs[$name]->getTypedValue();
+    /**
+     * Get multiple config values
+     *
+     * @param array $keys
+     * @return array
+     */
+    public static function getMany(array $keys)
+    {
+        $values = [];
+        foreach ($keys as $key) {
+            $values[$key] = self::get($key);
         }
+        return $values;
+    }
 
-        return $default;
+    /**
+     * Get site info for meta tags
+     *
+     * @return array
+     */
+    public static function getSiteInfo()
+    {
+        return self::getMany([
+            'site_title',
+            'site_description',
+            'site_keywords',
+            'logo_path',
+            'favicon_path',
+            'thumbnail_path'
+        ]);
     }
 
     public static function getMedia(string $name, string $collection, $default = null)

@@ -4,6 +4,7 @@ import { type ReactNode, useEffect } from 'react';
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner"; 
 import { usePage } from '@inertiajs/react';
+import '@/../css/app.css'; // Import the admin theme styles
 
 interface AppLayoutProps {
     children: ReactNode;

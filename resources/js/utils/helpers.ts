@@ -1,19 +1,16 @@
 /**
  * Format a number as currency
+ * 
+ * @param amount The amount to format
+ * @param locale The locale to use for formatting (defaults to 'en-US')
+ * @param currency The currency code to use (defaults to 'USD')
+ * @returns Formatted currency string
  */
-export function formatCurrency(amount: number | string, locale: string = 'vi-VN', currency: string = 'VND'): string {
-    const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
-    
-    if (isNaN(numAmount)) {
-        return '0 ₫';
-    }
-    
-    return new Intl.NumberFormat(locale, {
-        style: 'currency',
-        currency: currency,
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0
-    }).format(numAmount);
+export function formatCurrency(amount: number, locale = 'en-US', currency = 'USD'): string {
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency: currency,
+  }).format(amount);
 }
 
 /**

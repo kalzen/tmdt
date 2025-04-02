@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -26,10 +27,14 @@ class Catalogue extends Model implements HasMedia
         'position'
     ];
 
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
+
     /**
      * Lấy danh mục cha
      */
-    public function parent()
+    public function parent(): BelongsTo
     {
         return $this->belongsTo(Catalogue::class, 'parent_id');
     }
@@ -37,7 +42,7 @@ class Catalogue extends Model implements HasMedia
     /**
      * Lấy danh sách danh mục con
      */
-    public function children()
+    public function children(): HasMany
     {
         return $this->hasMany(Catalogue::class, 'parent_id');
     }
@@ -51,19 +56,19 @@ class Catalogue extends Model implements HasMedia
     }
 
     /**
-     * Lấy danh sách sản phẩm thuộc danh mục
-     */
-    public function products(): HasMany
-    {
-        return $this->hasMany(Product::class);
-    }
-
-    /**
      * The stores that belong to the catalogue.
      */
     public function stores(): BelongsToMany
     {
         return $this->belongsToMany(Store::class, 'store_catalogues');
+    }
+
+    /**
+     * Get the products for the catalogue.
+     */
+    public function products()
+    {
+        return $this->belongsToMany(Product::class, 'product_catalogues', 'catalogue_id', 'product_id');
     }
 
     /**

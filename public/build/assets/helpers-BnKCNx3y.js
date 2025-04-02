@@ -1,0 +1,1 @@
+function a(t,r="en-US",e="USD"){return new Intl.NumberFormat(r,{style:"currency",currency:e}).format(t)}function n(t){return t?t.startsWith("http://")||t.startsWith("https://")?t:t.startsWith("storage/")?`/${t}`:t.startsWith("/storage/")?t:`/storage/${t}`:""}export{n as a,a as f};
