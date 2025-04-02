@@ -25,16 +25,16 @@ Route::namespace('Frontend')->group(function () {
     Route::get('/', [App\Http\Controllers\Frontend\HomeController::class, 'index'])->name('home');
     
     // Product routes
-    Route::get('/products', [App\Http\Controllers\Frontend\ProductController::class, 'index'])->name('frontend.products.index');
-    Route::get('/products/{id}', [App\Http\Controllers\Frontend\ProductController::class, 'show'])->name('frontend.products.show');
+    Route::get('/product', [App\Http\Controllers\Frontend\ProductController::class, 'index'])->name('frontend.products.index');
+    Route::get('/product/{slug}', [App\Http\Controllers\Frontend\ProductController::class, 'show'])->name('frontend.products.show');
     
     // Store routes
-    Route::get('/stores', [App\Http\Controllers\Frontend\StoreController::class, 'index'])->name('frontend.stores.index');
-    Route::get('/stores/{id}', [App\Http\Controllers\Frontend\StoreController::class, 'show'])->name('frontend.stores.show');
+    Route::get('/store', [App\Http\Controllers\Frontend\StoreController::class, 'index'])->name('frontend.stores.index');
+    Route::get('/store/{slug}', [App\Http\Controllers\Frontend\StoreController::class, 'show'])->name('frontend.stores.show');
     
     // Category routes
-    Route::get('/categories', [App\Http\Controllers\Frontend\CategoryController::class, 'index'])->name('frontend.categories.index');
-    Route::get('/categories/{id}', [App\Http\Controllers\Frontend\CategoryController::class, 'show'])->name('frontend.categories.show');
+    Route::get('/category/all', [App\Http\Controllers\Frontend\CategoryController::class, 'index'])->name('frontend.categories.index');
+    Route::get('/category/{slug}', [App\Http\Controllers\Frontend\CategoryController::class, 'show'])->name('frontend.categories.show');
 });
 Route::get('/posts/{slug}', [FrontendController::class, 'showPost'])->name('post.show');
 
@@ -106,13 +106,3 @@ Route::resource('categories', CategoryController::class)->middleware(['auth', 'v
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
 
-// Frontend routes
-Route::middleware(['web', 'setlocale'])->group(function () {
-    // Category routes
-    Route::get('/categories/{slug}', [App\Http\Controllers\Frontend\CategoryController::class, 'show'])
-        ->name('frontend.categories.show');
-    
-    // Product routes
-    Route::get('/products/{id}', [App\Http\Controllers\Frontend\ProductController::class, 'show'])
-        ->name('frontend.products.show');
-});

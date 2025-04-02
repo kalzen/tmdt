@@ -47,6 +47,13 @@ interface Product {
     name: string;
     level: number;
   };
+  // Add catalogue_id to fix the error
+  catalogue_id: number;
+  catalogues: {
+    id: number;
+    name: string;
+    level: number;
+  }[];
   store: {
     id: number;
     name: string;
@@ -241,8 +248,17 @@ export default function ShowProduct({ product }: Props) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t">
               <div className="flex items-center gap-2">
                 <Tag className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm">{__('admin.category', 'Category')}:</span>
-                <span className="font-medium">{product.catalogue.name}</span>
+                <span className="text-sm">{__('admin.categories', 'Categories')}:</span>
+                <div className="flex flex-wrap gap-1">
+                  {product.catalogues.map((cat, index) => (
+                    <Badge key={cat.id} variant="outline" className={cat.id === product.catalogue_id ? "bg-primary/10" : ""}>
+                      {cat.name}
+                      {cat.id === product.catalogue_id && 
+                        <span className="ml-1 text-xs text-primary">(Primary)</span>
+                      }
+                    </Badge>
+                  ))}
+                </div>
               </div>
               
               {product.store && (

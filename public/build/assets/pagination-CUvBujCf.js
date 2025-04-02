@@ -1,0 +1,1 @@
+import{j as n}from"./app-dP_i2JvW.js";import{a as i}from"./button-DKJQ5y5i.js";function s({className:a,...t}){return n.jsx("nav",{role:"navigation","aria-label":"pagination","data-slot":"pagination",className:i("mx-auto flex w-full justify-center",a),...t})}export{s as P};

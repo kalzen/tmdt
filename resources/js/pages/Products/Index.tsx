@@ -30,6 +30,7 @@ interface Product {
         name: string;
         level: number;
     };
+    catalogue_count: number; // New field to show count of catalogues
     store: {
         id: number;
         name: string;
@@ -318,6 +319,11 @@ export default function ProductIndex({ products, catalogues, filters }: Props) {
                                         </TableCell>
                                         <TableCell>
                                             {product.catalogue.name}
+                                            {product.catalogue_count > 1 && (
+                                                <Badge variant="outline" className="ml-1">
+                                                    +{product.catalogue_count - 1}
+                                                </Badge>
+                                            )}
                                         </TableCell>
                                         <TableCell className="text-right">
                                             <div className="flex flex-col items-end">
@@ -380,21 +386,7 @@ export default function ProductIndex({ products, catalogues, filters }: Props) {
                     </Table>
                 </div>
 
-                {/* Pagination - Kiểm tra rõ hơn tính hợp lệ của meta */}
-                {safeProducts.meta && typeof safeProducts.meta.total === 'number' && safeProducts.meta.total > 0 && (
-                    <div className="mt-4 border-t pt-4">
-                        <Pagination
-                            currentPage={safeProducts.meta.current_page || 1}
-                            lastPage={safeProducts.meta.last_page || 1}
-                            perPage={parseInt(safeFilters.per_page || '10')}
-                            total={safeProducts.meta.total || 0}
-                            from={safeProducts.meta.from || 0}
-                            to={safeProducts.meta.to || 0}
-                            onPageChange={handlePageChange}
-                            onPerPageChange={handlePerPageChange}
-                        />
-                    </div>
-                )}
+            
             </div>
         </AppLayout>
     );

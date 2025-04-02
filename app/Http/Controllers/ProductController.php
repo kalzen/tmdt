@@ -26,6 +26,7 @@ class ProductController extends Controller
         
         $query = Product::query()
             ->with(['catalogue:id,name,parent_id,level', 'store:id,name'])
+            ->withCount('catalogues')
             ->withCount('media');
         
         // Tìm kiếm theo tên, mã sản phẩm
@@ -139,6 +140,8 @@ class ProductController extends Controller
             'sale_price' => 'nullable|numeric|min:0|lt:price',
             'stock_quantity' => 'required|integer|min:0',
             'catalogue_id' => 'required|exists:catalogues,id',
+            'catalogue_ids' => 'nullable|array',
+            'catalogue_ids.*' => 'exists:catalogues,id',
             'store_id' => 'nullable|exists:stores,id',
             'is_active' => 'boolean',
             'is_featured' => 'boolean',
@@ -165,7 +168,13 @@ class ProductController extends Controller
                 $store_id = Auth::user()->store?->id;
             }
             
-            // Tạo sản phẩm
+            // Ensure we have catalogue_ids array, at minimum containing the primary catalogue_id
+            $catalogueIds = $request->catalogue_ids ?? [];
+            if (!in_array($request->catalogue_id, $catalogueIds)) {
+                $catalogueIds[] = $request->catalogue_id;
+            }
+            
+            // Create product
             $product = Product::create([
                 'title' => $request->title,
                 'slug' => $slug,
@@ -175,7 +184,7 @@ class ProductController extends Controller
                 'price' => $request->price,
                 'sale_price' => $request->sale_price,
                 'stock_quantity' => $request->stock_quantity,
-                'catalogue_id' => $request->catalogue_id,
+                'catalogue_id' => $request->catalogue_id, // Keep primary catalogue
                 'user_id' => Auth::id(),
                 'store_id' => $store_id,
                 'is_active' => $request->is_active ?? true,
@@ -183,6 +192,9 @@ class ProductController extends Controller
                 'meta_title' => $request->meta_title,
                 'meta_description' => $request->meta_description,
             ]);
+            
+            // Sync catalogues
+            $product->catalogues()->sync($catalogueIds);
             
             // Xử lý thuộc tính nếu có
             if ($request->has('attributes') && is_array($request->attributes)) {
@@ -231,7 +243,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        $product->load(['catalogue', 'user', 'store', 'attributes.attribute']);
+        $product->load(['catalogue', 'user', 'store', 'attributes.attribute', 'catalogues']);
         
         // Lấy media
         $product->thumbnail = $product->getFirstMediaUrl('thumbnail');
@@ -310,6 +322,7 @@ class ProductController extends Controller
             'product' => array_merge($product->toArray(), [
                 'thumbnail' => $thumbnailUrl,
                 'gallery' => $gallery,
+                'catalogues' => $product->catalogues()->select('id', 'name', 'level')->get(),
             ]),
             'catalogues' => $catalogues,
             'stores' => $stores,
@@ -332,6 +345,8 @@ class ProductController extends Controller
             'sale_price' => 'nullable|numeric|min:0|lt:price',
             'stock_quantity' => 'required|integer|min:0',
             'catalogue_id' => 'required|exists:catalogues,id',
+            'catalogue_ids' => 'nullable|array',
+            'catalogue_ids.*' => 'exists:catalogues,id',
             'store_id' => 'nullable|exists:stores,id',
             'is_active' => 'boolean',
             'is_featured' => 'boolean',
@@ -348,6 +363,12 @@ class ProductController extends Controller
                 $store_id = Auth::user()->store?->id;
             }
             
+            // Ensure we have catalogue_ids array, at minimum containing the primary catalogue_id
+            $catalogueIds = $request->catalogue_ids ?? [];
+            if (!in_array($request->catalogue_id, $catalogueIds)) {
+                $catalogueIds[] = $request->catalogue_id;
+            }
+            
             // Cập nhật sản phẩm
             $product->update([
                 'title' => $request->title,
@@ -357,13 +378,16 @@ class ProductController extends Controller
                 'price' => $request->price,
                 'sale_price' => $request->sale_price,
                 'stock_quantity' => $request->stock_quantity,
-                'catalogue_id' => $request->catalogue_id,
+                'catalogue_id' => $request->catalogue_id, // Keep primary catalogue
                 'store_id' => $store_id,
                 'is_active' => $request->is_active ?? $product->is_active,
                 'is_featured' => $request->is_featured ?? $product->is_featured,
                 'meta_title' => $request->meta_title,
                 'meta_description' => $request->meta_description,
             ]);
+            
+            // Sync catalogues
+            $product->catalogues()->sync($catalogueIds);
             
             // Cập nhật thuộc tính
             if ($request->has('attributes') && is_array($request->attributes)) {

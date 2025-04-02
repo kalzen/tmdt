@@ -62,6 +62,7 @@ export default function CreateProduct({ catalogues, stores, attributes }: Props)
         sale_price: '',
         stock_quantity: '0',
         catalogue_id: '',
+        catalogue_ids: [] as string[],  // Add this line for multiple catalogues
         store_id: '',
         is_active: true,
         is_featured: false,
@@ -199,30 +200,46 @@ export default function CreateProduct({ catalogues, stores, attributes }: Props)
                                     
                                     <div className="grid gap-2">
                                         <Label htmlFor="catalogue_id">{__('admin.catalogue', 'Catalogue')} <span className="text-destructive">*</span></Label>
-                                        {/* Replace Select with DropdownMenu */}
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                                <Button variant="outline" className="w-full justify-between">
-                                                    {data.catalogue_id 
-                                                        ? catalogues.find(c => c.id.toString() === data.catalogue_id)?.name 
-                                                        : __('admin.select_catalogue', 'Select catalogue')}
-                                                    <svg className="h-4 w-4 opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                                        <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
-                                                    </svg>
-                                                </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="center" className="w-[300px] max-h-[300px] overflow-auto">
+                                        {/* Replace DropdownMenu with multiple selection */}
+                                        <div className="border rounded-md p-4 max-h-[300px] overflow-y-auto">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                                                 {catalogues.map((cat) => (
-                                                    <DropdownMenuItem 
-                                                        key={cat.id} 
-                                                        onClick={() => setData('catalogue_id', cat.id.toString())}
-                                                    >
-                                                        {cat.name}
-                                                    </DropdownMenuItem>
+                                                    <div key={cat.id} className="flex items-center space-x-2">
+                                                        <Checkbox
+                                                            id={`catalogue-${cat.id}`}
+                                                            checked={data.catalogue_ids.includes(cat.id.toString())}
+                                                            onCheckedChange={(checked) => {
+                                                                const isChecked = !!checked;
+                                                                let newCatalogueIds = [...data.catalogue_ids];
+                                                                
+                                                                if (isChecked) {
+                                                                    newCatalogueIds.push(cat.id.toString());
+                                                                    // If this is the first selection, also set it as the primary catalogue
+                                                                    if (data.catalogue_id === '') {
+                                                                        setData('catalogue_id', cat.id.toString());
+                                                                    }
+                                                                } else {
+                                                                    newCatalogueIds = newCatalogueIds.filter(id => id !== cat.id.toString());
+                                                                    // If removing the primary catalogue, set the first available as primary
+                                                                    if (data.catalogue_id === cat.id.toString() && newCatalogueIds.length > 0) {
+                                                                        setData('catalogue_id', newCatalogueIds[0]);
+                                                                    } else if (newCatalogueIds.length === 0) {
+                                                                        setData('catalogue_id', '');
+                                                                    }
+                                                                }
+                                                                
+                                                                setData('catalogue_ids', newCatalogueIds);
+                                                            }}
+                                                        />
+                                                        <Label htmlFor={`catalogue-${cat.id}`}>{cat.name}</Label>
+                                                    </div>
                                                 ))}
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
-                                        <InputError message={errors.catalogue_id} />
+                                            </div>
+                                        </div>
+                                        <div className="text-sm text-muted-foreground">
+                                            {__('admin.select_multiple_catalogues', 'Select one or more catalogues for this product')}
+                                        </div>
+                                        <InputError message={errors.catalogue_ids || errors.catalogue_id} />
                                     </div>
                                     
                                     {stores.length > 0 && (

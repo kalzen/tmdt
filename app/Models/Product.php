@@ -53,7 +53,8 @@ class Product extends Model implements HasMedia
      */
     public function catalogues()
     {
-        return $this->belongsToMany(Catalogue::class, 'product_catalogues', 'product_id', 'catalogue_id');
+        return $this->belongsToMany(Catalogue::class, 'product_catalogues', 'product_id', 'catalogue_id')
+                    ->select(['catalogues.id', 'catalogues.name', 'catalogues.level']); // Specify the table name to avoid ambiguity
     }
 
     /**
