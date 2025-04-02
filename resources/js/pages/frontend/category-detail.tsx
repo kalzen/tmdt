@@ -161,8 +161,10 @@ export default function CategoryDetail({
                 {i < breadcrumbs.length - 1 ? (
                   <>
                     <BreadcrumbItem>
-                      <BreadcrumbLink as={Link} href={item.slug ? route('frontend.categories.show', item.slug) : '/'}>
-                        {item.name}
+                      <BreadcrumbLink asChild>
+                        <Link href={item.slug ? route('frontend.categories.show', item.slug) : '/'}>
+                          {item.name}
+                        </Link>
                       </BreadcrumbLink>
                     </BreadcrumbItem>
                     <BreadcrumbSeparator>
@@ -423,7 +425,7 @@ export default function CategoryDetail({
             )}
             
             {/* Products Grid */}
-            {products.data.length === 0 ? (
+            {!products || !products.data || products.data.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 text-center">
                 <p className="text-muted-foreground mb-4">No products found for this category.</p>
                 <Button onClick={resetFilters} variant="outline">Reset Filters</Button>
@@ -437,7 +439,7 @@ export default function CategoryDetail({
                   {products.data.map((product) => (
                     viewMode === 'grid' ? (
                       // Grid View
-                      <Link key={product.id} href={`/products/${product.slug}`} className="block">
+                      <Link key={product.id} href={route('frontend.products.show', product.slug)} className="block">
                         <Card className="h-full overflow-hidden transition-shadow hover:shadow-md">
                           <div className="aspect-square overflow-hidden">
                             <img 
@@ -470,7 +472,7 @@ export default function CategoryDetail({
                       </Link>
                     ) : (
                       // List View
-                      <Link key={product.id} href={`/products/${product.slug}`} className="block">
+                      <Link key={product.id} href={route('frontend.products.show', product.slug)} className="block">
                         <Card className="overflow-hidden transition-shadow hover:shadow-md">
                           <div className="flex flex-row">
                             <div className="w-32 h-32 flex-shrink-0">
@@ -508,7 +510,7 @@ export default function CategoryDetail({
                 </div>
                 
                 {/* Pagination */}
-                {products.meta.last_page > 1 && (
+                {products && products.meta && products.meta.last_page > 1 && (
                   <div className="flex justify-center mt-8">
                     <div className="flex items-center gap-1">
                       {/* Previous Page */}

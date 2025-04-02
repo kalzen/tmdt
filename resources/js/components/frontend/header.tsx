@@ -67,18 +67,18 @@ export function Header({ siteTitle = 'TMDT', logoPath }: HeaderProps) {
               </SheetTrigger>
               <SheetContent side="left" className="w-[300px] sm:w-[400px]">
                 <nav className="flex flex-col gap-4 mt-8">
-                  <Link href="/" className="text-lg font-semibold">Home</Link>
-                  <Link href="/categories" className="text-lg font-semibold">Categories</Link>
-                  <Link href="/stores" className="text-lg font-semibold">Stores</Link>
-                  <Link href="/products" className="text-lg font-semibold">Products</Link>
-                  <Link href="/blog" className="text-lg font-semibold">Blog</Link>
-                  <Link href="/help" className="text-lg font-semibold">Help Center</Link>
+                  <Link href={route('home')} className="text-lg font-semibold">Home</Link>
+                  <Link href={route('frontend.categories.index')} className="text-lg font-semibold">Categories</Link>
+                  <Link href={route('frontend.stores.index')} className="text-lg font-semibold">Stores</Link>
+                  <Link href={route('frontend.products.index')} className="text-lg font-semibold">Products</Link>
+                  <Link href="/posts" className="text-lg font-semibold">Blog</Link>
+                  <Link href={route('contact.index')} className="text-lg font-semibold">Help Center</Link>
                 </nav>
               </SheetContent>
             </Sheet>
 
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2">
+            <Link href={route('home')} className="flex items-center gap-2">
               {logoPath ? (
                 <img src={logoPath} alt={siteTitle} className="h-8 w-auto" />
               ) : (
@@ -91,7 +91,7 @@ export function Header({ siteTitle = 'TMDT', logoPath }: HeaderProps) {
               <NavigationMenuList>
                 <NavigationMenuItem>
                   <NavigationMenuLink asChild>
-                    <Link href="/" className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50">
+                    <Link href={route('home')} className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50">
                       Home
                     </Link>
                   </NavigationMenuLink>
@@ -104,7 +104,7 @@ export function Header({ siteTitle = 'TMDT', logoPath }: HeaderProps) {
                         <NavigationMenuLink asChild>
                           <Link
                             className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-primary/50 to-primary p-6 no-underline outline-none focus:shadow-md"
-                            href="/categories"
+                            href={route('frontend.categories.index')}
                           >
                             <div className="mt-4 mb-2 text-lg font-medium text-white">
                               All Categories
@@ -115,13 +115,13 @@ export function Header({ siteTitle = 'TMDT', logoPath }: HeaderProps) {
                           </Link>
                         </NavigationMenuLink>
                       </li>
-                      <ListItem href="/categories/electronics" title="Electronics">
+                      <ListItem href={route('frontend.categories.show', 'electronics')} title="Electronics">
                         Phones, computers, electronic devices
                       </ListItem>
-                      <ListItem href="/categories/fashion" title="Fashion">
+                      <ListItem href={route('frontend.categories.show', 'fashion')} title="Fashion">
                         Clothing, shoes, accessories
                       </ListItem>
-                      <ListItem href="/categories/home" title="Home & Living">
+                      <ListItem href={route('frontend.categories.show', 'home')} title="Home & Living">
                         Household items, furniture, decor
                       </ListItem>
                     </ul>
@@ -131,13 +131,13 @@ export function Header({ siteTitle = 'TMDT', logoPath }: HeaderProps) {
                   <NavigationMenuTrigger>Stores</NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-                      <ListItem href="/stores" title="All Stores">
+                      <ListItem href={route('frontend.stores.index')} title="All Stores">
                         Explore all stores
                       </ListItem>
-                      <ListItem href="/stores/featured" title="Featured Stores">
+                      <ListItem href={`${route('frontend.stores.index')}?featured=1`} title="Featured Stores">
                         Highly rated stores
                       </ListItem>
-                      <ListItem href="/stores/new" title="New Stores">
+                      <ListItem href={`${route('frontend.stores.index')}?sort=newest`} title="New Stores">
                         Recently joined stores
                       </ListItem>
                     </ul>
@@ -145,21 +145,21 @@ export function Header({ siteTitle = 'TMDT', logoPath }: HeaderProps) {
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                   <NavigationMenuLink asChild>
-                    <Link href="/products" className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50">
+                    <Link href={route('frontend.products.index')} className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50">
                       Products
                     </Link>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                   <NavigationMenuLink asChild>
-                    <Link href="/blog" className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50">
+                    <Link href="/posts" className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50">
                       Blog
                     </Link>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                   <NavigationMenuLink asChild>
-                    <Link href="/help" className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50">
+                    <Link href={route('contact.index')} className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50">
                       Help Center
                     </Link>
                   </NavigationMenuLink>
@@ -176,7 +176,7 @@ export function Header({ siteTitle = 'TMDT', logoPath }: HeaderProps) {
               </Button>
             </Link>
             <Link href="/register">
-              <Button variant="primary" size="sm" className="hidden md:flex rounded-full">
+              <Button variant="default" size="sm" className="hidden md:flex rounded-full">
                 Sign Up
               </Button>
             </Link>

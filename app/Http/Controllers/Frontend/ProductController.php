@@ -15,10 +15,11 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Inertia\Response
      */
-    public function show($id)
+    public function show($slug)
     {
         $product = Product::with(['store', 'catalogues', 'attributes.attribute'])
-            ->findOrFail($id);
+            ->where('slug', $slug)
+            ->firstOrFail();
             
         // Get related products from same category
         $relatedProducts = Product::whereHas('catalogues', function($query) use ($product) {
@@ -32,7 +33,7 @@ class ProductController extends Controller
             ->map(function ($relatedProduct) {
                 return [
                     'id' => $relatedProduct->id,
-                    'name' => $relatedProduct->name,
+                    'name' => $relatedProduct->title, // Use title instead of name
                     'slug' => $relatedProduct->slug,
                     'price' => $relatedProduct->price,
                     'sale_price' => $relatedProduct->sale_price,
@@ -40,6 +41,7 @@ class ProductController extends Controller
                     'store' => [
                         'id' => $relatedProduct->store->id,
                         'name' => $relatedProduct->store->name,
+                        'slug' => $relatedProduct->store->slug, // Add store slug
                     ],
                 ];
             });
@@ -65,7 +67,7 @@ class ProductController extends Controller
         // Add product
         $breadcrumbs[] = [
             'id' => $product->id,
-            'name' => $product->name,
+            'name' => $product->title, // Use title instead of name for consistency
             'slug' => null,
         ];
         
@@ -77,7 +79,7 @@ class ProductController extends Controller
         // Format product data for frontend
         $productData = [
             'id' => $product->id,
-            'name' => $product->name,
+            'name' => $product->title, // Use title field as name
             'slug' => $product->slug,
             'sku' => $product->sku,
             'description' => $product->description,
@@ -102,9 +104,9 @@ class ProductController extends Controller
                 return [
                     'id' => $catalogue->id,
                     'name' => $catalogue->name,
-                    'slug' => $catalogue->slug,
+                    'slug' => $catalogue->slug, // Make sure slug is included for each category
                 ];
-            }),
+            })->values()->all(), // Convert to array with reindexed keys
             'attributes' => $groupedAttributes->map(function($group) {
                 return $group->map(function($attribute) {
                     return [
@@ -117,7 +119,7 @@ class ProductController extends Controller
                 'id' => $product->store->id,
                 'name' => $product->store->name,
                 'logo' => $product->store->getFirstMediaUrl('logo') ?: asset('store-placeholder.jpeg'),
-                'slug' => $product->store->slug,
+                'slug' => $product->store->slug, // Ensure store slug is included
             ] : null,
             'created_at' => $product->created_at->format('Y-m-d'),
         ];

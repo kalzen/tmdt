@@ -28,11 +28,12 @@ class HomeController extends Controller
             ->map(function ($product) {
                 return [
                     'id' => $product->id,
-                    'name' => $product->name,
+                    'name' => $product->title, // Map title to name
                     'price' => $product->price,
+                    'slug' => $product->slug,
                     'image' => $product->getFirstMediaUrl('product_images') ?: asset('category-placeholder.jpeg'),
                     'store' => [
-                        'id' => $product->store->id,
+                        'slug' => $product->store->slug,
                         'name' => $product->store->name,
                     ],
                 ];
@@ -48,6 +49,7 @@ class HomeController extends Controller
                 return [
                     'id' => $store->id,
                     'name' => $store->name,
+                    'slug' => $store->slug, // Add the slug property to fix the route error
                     'logo' => $store->getFirstMediaUrl('logo') ?: asset('category-placeholder.jpeg'),
                     'productCount' => $store->products_count,
                 ];

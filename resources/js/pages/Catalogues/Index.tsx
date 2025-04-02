@@ -5,12 +5,12 @@ import { Head, Link, router, usePage } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
-import { Pagination } from '@/components/ui/pagination';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
 import { __ } from '@/utils/translate';
+import { CustomPagination } from '@/components/custom-pagination';
 
 interface Catalogue {
     id: number;
@@ -47,6 +47,9 @@ interface Props {
 
 export default function CatalogueIndex({ catalogues, filters }: Props) {
     const [searchQuery, setSearchQuery] = useState(filters.search || '');
+
+    // Debug output to console to check the structure
+    console.log('Catalogues data:', catalogues);
 
     // Breadcrumbs for navigation
     const breadcrumbs: BreadcrumbItem[] = [
@@ -187,17 +190,29 @@ export default function CatalogueIndex({ catalogues, filters }: Props) {
                 </div>
 
                 {/* Pagination */}
-                {catalogues.meta && catalogues.meta.total > 0 && (
+                {catalogues && catalogues.data && catalogues.data.length > 0 && (
                     <div className="mt-4 border-t pt-4">
-                        <Pagination
-                            currentPage={catalogues.meta.current_page}
-                            lastPage={catalogues.meta.last_page}
+                        <CustomPagination
+                            currentPage={catalogues.meta?.current_page || 1}
+                            lastPage={catalogues.meta?.last_page || 1}
                             perPage={parseInt(filters.per_page || '10')}
-                            total={catalogues.meta.total}
-                            from={catalogues.meta.from || 0}
-                            to={catalogues.meta.to || 0}
-                            onPageChange={handlePageChange}
-                            onPerPageChange={handlePerPageChange}
+                            total={catalogues.meta?.total || catalogues.data.length}
+                            from={catalogues.meta?.from || 1}
+                            to={catalogues.meta?.to || catalogues.data.length}
+                            onPageChange={(page: number) => {
+                                router.get(
+                                    route('catalogues.index'), 
+                                    { ...filters, page }, 
+                                    { preserveState: true, preserveScroll: true }
+                                );
+                            }}
+                            onPerPageChange={(perPage: number) => {
+                                router.get(
+                                    route('catalogues.index'), 
+                                    { ...filters, per_page: perPage, page: 1 }, 
+                                    { preserveState: true }
+                                );
+                            }}
                         />
                     </div>
                 )}

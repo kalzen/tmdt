@@ -322,7 +322,7 @@ class ProductController extends Controller
             'product' => array_merge($product->toArray(), [
                 'thumbnail' => $thumbnailUrl,
                 'gallery' => $gallery,
-                'catalogues' => $product->catalogues()->select('id', 'name', 'level')->get(),
+                'catalogues' => $product->catalogues()->select('catalogues.id', 'name', 'level')->get(), // Fix the column ambiguity by specifying the table name
             ]),
             'catalogues' => $catalogues,
             'stores' => $stores,

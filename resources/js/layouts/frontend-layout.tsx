@@ -69,9 +69,7 @@ export default function FrontendLayout({ children, title, description }: Fronten
     return (
         <div className="min-h-screen flex flex-col bg-background">
             {/* Add favicon link if available */}
-            {site?.favicon_path && (
-                <link rel="shortcut icon" href={site.favicon_path} type="image/x-icon" />
-            )}
+            <link rel="shortcut icon" href="/favicon.png" type="image/png" />
             
             {/* Add meta description if available */}
             {metaDescription && (
@@ -93,8 +91,8 @@ export default function FrontendLayout({ children, title, description }: Fronten
             )}
             <meta property="og:type" content="website" />
             
-            <Header siteTitle={site?.site_title} logoPath={site?.logo_path} />
-            <main className="flex-1">
+            <Header siteTitle={site?.site_title} logoPath="/logo.png" />
+            <main className="flex-1 place-items-center">
                 {children}
             </main>
             <Footer />

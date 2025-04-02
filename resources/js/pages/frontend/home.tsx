@@ -11,11 +11,13 @@ import { formatCurrency } from '@/utils/helpers';
 interface Product {
   id: number;
   name: string;
+  slug: string;
   price: number;
   image: string;
   store: {
     id: number;
     name: string;
+    slug: string;
   };
 }
 
@@ -23,12 +25,14 @@ interface Store {
   id: number;
   name: string;
   logo: string;
+  slug: string;
   productCount: number;
 }
 
 interface Category {
   id: number;
   name: string;
+  slug: string; // Add the slug property to fix the error
   image: string;
   productCount: number;
   children?: Category[]; // Added children property for nested categories
@@ -68,7 +72,7 @@ export default function Home({ featuredProducts, popularStores, categories, slid
       <Head title="Home" />
       
       {/* Hero Slider with Categories Sidebar */}
-      <section className="py-6">
+      <section className="py-6 w-full bg-slate-50">
         <div className="container px-4 mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             {/* Categories Sidebar - Left Column - Takes 1/4 width on desktop */}
@@ -88,7 +92,7 @@ export default function Home({ featuredProducts, popularStores, categories, slid
                         className={`${activeCategory === category.id ? 'bg-accent' : ''}`}
                       >
                         <Link 
-                          href={route('frontend.categories.show', category.slug)} 
+                          href={route('frontend.categories.show', category.slug)}
                           className="flex items-center justify-between p-3 hover:bg-accent/50 transition-colors"
                         >
                           <span className="text-sm">{category.name}</span>
@@ -204,7 +208,7 @@ export default function Home({ featuredProducts, popularStores, categories, slid
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl font-bold">Shop by Category</h2>
             <Button variant="link" asChild>
-              <Link href="/categories">View All Categories</Link>
+              <Link href={route('frontend.categories.index')}>View All Categories</Link>
             </Button>
           </div>
           
@@ -240,7 +244,7 @@ export default function Home({ featuredProducts, popularStores, categories, slid
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl font-bold">Featured Products</h2>
             <Button variant="link" asChild>
-              <Link href="/products">View All Products</Link>
+              <Link href={route('frontend.products.index')}>View All Products</Link>
             </Button>
           </div>
           
@@ -256,7 +260,7 @@ export default function Home({ featuredProducts, popularStores, categories, slid
                 </div>
                 <CardContent className="p-4">
                   <Link 
-                    href={route('frontend.products.show', product.id)}
+                    href={route('frontend.products.show', product.slug)}
                     className="font-medium line-clamp-2 group-hover:text-primary transition-colors"
                   >
                     {product.name}
@@ -264,7 +268,7 @@ export default function Home({ featuredProducts, popularStores, categories, slid
                   <div className="flex items-center justify-between mt-2">
                     <span className="font-bold text-primary">{formatCurrency(product.price)}</span>
                     <Link 
-                      href={`/stores/${product.store.id}`}
+                      href={route('frontend.stores.show', product.store.slug)}
                       className="text-xs text-muted-foreground hover:text-primary transition-colors"
                     >
                       {product.store.name}
@@ -278,12 +282,12 @@ export default function Home({ featuredProducts, popularStores, categories, slid
       </section>
       
       {/* Popular Stores */}
-      <section className="py-12 bg-muted/30">
+      <section className="py-12 bg-slate-50 w-full">
         <div className="container px-4 mx-auto">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl font-bold">Popular Stores</h2>
             <Button variant="link" asChild>
-              <Link href="/stores">View All Stores</Link>
+              <Link href={route('frontend.stores.index')}>View All Stores</Link>
             </Button>
           </div>
           
@@ -291,7 +295,7 @@ export default function Home({ featuredProducts, popularStores, categories, slid
             {popularStores?.map((store) => (
               <Link 
                 key={store.id} 
-                href={`/stores/${store.id}`}
+                href={route('frontend.stores.show', store.slug)}
                 className="group block"
               >
                 <div className="bg-background rounded-lg shadow-sm overflow-hidden transition-all group-hover:shadow-md p-6">
@@ -312,14 +316,14 @@ export default function Home({ featuredProducts, popularStores, categories, slid
       </section>
       
       {/* Call to Action */}
-      <section className="py-16 bg-primary text-primary-foreground">
+      <section className="py-16 bg-primary text-primary-foreground w-full">
         <div className="container px-4 mx-auto text-center">
           <h2 className="text-3xl font-bold mb-4">Start Selling on TMDT Marketplace</h2>
           <p className="max-w-2xl mx-auto mb-8">
             Join thousands of successful sellers on our platform. Reach millions of customers and grow your business.
           </p>
           <Button size="lg" variant="secondary" asChild>
-            <Link href="/seller/register">Open Your Store</Link>
+            <Link href="/register">Open Your Store</Link>
           </Button>
         </div>
       </section>

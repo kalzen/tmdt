@@ -61,7 +61,7 @@ class CategoryController extends Controller
             ->through(function ($product) {
                 return [
                     'id' => $product->id,
-                    'name' => $product->name,
+                    'name' => $product->title, // Map title to name
                     'slug' => $product->slug,
                     'price' => $product->price,
                     'sale_price' => $product->sale_price,

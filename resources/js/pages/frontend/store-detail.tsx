@@ -12,10 +12,17 @@ interface Product {
   name: string;
   price: number;
   image: string;
-  category: {
+  slug?: string;
+  category?: {
     id: number;
     name: string;
+    slug?: string;
   };
+  categories?: {
+    id: number;
+    name: string;
+    slug: string;
+  }[];
 }
 
 interface Category {
@@ -191,16 +198,31 @@ export default function StoreDetail({ store, products }: StoreDetailProps) {
                       </div>
                       <CardContent className="p-4">
                         <Link 
-                          href={`/products/${product.id}`}
+                          href={route('frontend.products.show', product.slug || product.id)}
                           className="font-medium line-clamp-2 group-hover:text-primary transition-colors"
                         >
                           {product.name}
                         </Link>
                         <div className="flex items-center justify-between mt-2">
                           <span className="font-bold text-primary">${product.price.toFixed(2)}</span>
-                          <span className="text-xs text-muted-foreground">
-                            {product.category.name}
-                          </span>
+                          <div className="flex gap-1 flex-wrap justify-end">
+                            {product.categories && product.categories.length > 0 ? (
+                              <div className="flex flex-wrap gap-1 justify-end">
+                                {product.categories.slice(0, 1).map(cat => (
+                                  <span key={cat.id} className="text-xs text-muted-foreground">
+                                    {cat.name}
+                                  </span>
+                                ))}
+                                {product.categories.length > 1 && (
+                                  <span className="text-xs text-muted-foreground">+{product.categories.length - 1}</span>
+                                )}
+                              </div>
+                            ) : (
+                              <span className="text-xs text-muted-foreground">
+                                Uncategorized
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </CardContent>
                     </Card>
@@ -225,16 +247,31 @@ export default function StoreDetail({ store, products }: StoreDetailProps) {
                       </div>
                       <CardContent className="p-4">
                         <Link 
-                          href={`/products/${product.id}`}
+                          href={route('frontend.products.show', product.slug || product.id)}
                           className="font-medium line-clamp-2 group-hover:text-primary transition-colors"
                         >
                           {product.name}
                         </Link>
                         <div className="flex items-center justify-between mt-2">
                           <span className="font-bold text-primary">${product.price.toFixed(2)}</span>
-                          <span className="text-xs text-muted-foreground">
-                            {product.category.name}
-                          </span>
+                          <div className="flex gap-1 flex-wrap justify-end">
+                            {product.categories && product.categories.length > 0 ? (
+                              <div className="flex flex-wrap gap-1 justify-end">
+                                {product.categories.slice(0, 1).map(cat => (
+                                  <span key={cat.id} className="text-xs text-muted-foreground">
+                                    {cat.name}
+                                  </span>
+                                ))}
+                                {product.categories.length > 1 && (
+                                  <span className="text-xs text-muted-foreground">+{product.categories.length - 1}</span>
+                                )}
+                              </div>
+                            ) : (
+                              <span className="text-xs text-muted-foreground">
+                                Uncategorized
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </CardContent>
                     </Card>
@@ -246,36 +283,54 @@ export default function StoreDetail({ store, products }: StoreDetailProps) {
             {/* All Products */}
             <div>
               <h2 className="text-xl font-bold mb-6">All Products</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                {products.data.map((product) => (
-                  <Card key={product.id} className="group overflow-hidden">
-                    <div className="aspect-square relative overflow-hidden">
-                      <img 
-                        src={product.image} 
-                        alt={product.name}
-                        className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                      />
-                    </div>
-                    <CardContent className="p-4">
-                      <Link 
-                        href={`/products/${product.id}`}
-                        className="font-medium line-clamp-2 group-hover:text-primary transition-colors"
-                      >
-                        {product.name}
-                      </Link>
-                      <div className="flex items-center justify-between mt-2">
-                        <span className="font-bold text-primary">${product.price.toFixed(2)}</span>
-                        <span className="text-xs text-muted-foreground">
-                          {product.category.name}
-                        </span>
+              {products && products.data && products.data.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                  {products.data.map((product) => (
+                    <Card key={product.id} className="group overflow-hidden">
+                      <div className="aspect-square relative overflow-hidden">
+                        <img 
+                          src={product.image} 
+                          alt={product.name}
+                          className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                        />
                       </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-              
+                      <CardContent className="p-4">
+                        <Link 
+                          href={route('frontend.products.show', product.slug || product.id)}
+                          className="font-medium line-clamp-2 group-hover:text-primary transition-colors"
+                        >
+                          {product.name}
+                        </Link>
+                        <div className="flex items-center justify-between mt-2">
+                          <span className="font-bold text-primary">${product.price.toFixed(2)}</span>
+                          <div className="flex gap-1 flex-wrap justify-end">
+                            {product.categories && product.categories.length > 0 ? (
+                              <div className="flex flex-wrap gap-1 justify-end">
+                                {product.categories.slice(0, 1).map(cat => (
+                                  <span key={cat.id} className="text-xs text-muted-foreground">
+                                    {cat.name}
+                                  </span>
+                                ))}
+                                {product.categories.length > 1 && (
+                                  <span className="text-xs text-muted-foreground">+{product.categories.length - 1}</span>
+                                )}
+                              </div>
+                            ) : (
+                              <span className="text-xs text-muted-foreground">
+                                Uncategorized
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-center text-muted-foreground">No products found for this store.</p>
+              )}
               {/* Pagination */}
-              {products.meta.last_page > 1 && (
+              {products && products.meta && products.meta.last_page > 1 && (
                 <div className="flex justify-center mt-8">
                   {products.links.map((link, i) => (
                     <Link
