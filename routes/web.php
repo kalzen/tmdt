@@ -24,6 +24,9 @@ use App\Http\Controllers\StoreController;
 Route::namespace('Frontend')->group(function () {
     Route::get('/', [App\Http\Controllers\Frontend\HomeController::class, 'index'])->name('home');
     
+    // Chat Bot API
+    Route::post('/api/chatbot', [App\Http\Controllers\Frontend\ChatBotController::class, 'chat'])->name('frontend.chatbot.chat');
+    
     // Product routes
     Route::get('/product', [App\Http\Controllers\Frontend\ProductController::class, 'index'])->name('frontend.products.index');
     Route::get('/product/{slug}', [App\Http\Controllers\Frontend\ProductController::class, 'show'])->name('frontend.products.show');
@@ -38,6 +41,16 @@ Route::namespace('Frontend')->group(function () {
     
     // Search route
     Route::get('/search', [App\Http\Controllers\Frontend\SearchController::class, 'search'])->name('frontend.search');
+    
+    // Footer page routes
+    Route::get('/deals', [App\Http\Controllers\Frontend\PageController::class, 'deals'])->name('frontend.deals');
+    Route::get('/faq', [App\Http\Controllers\Frontend\PageController::class, 'faq'])->name('frontend.faq');
+    Route::get('/shipping', [App\Http\Controllers\Frontend\PageController::class, 'shipping'])->name('frontend.shipping');
+    Route::get('/returns', [App\Http\Controllers\Frontend\PageController::class, 'returns'])->name('frontend.returns');
+    Route::get('/about', [App\Http\Controllers\Frontend\PageController::class, 'about'])->name('frontend.about');
+    Route::get('/careers', [App\Http\Controllers\Frontend\PageController::class, 'careers'])->name('frontend.careers');
+    Route::get('/privacy', [App\Http\Controllers\Frontend\PageController::class, 'privacy'])->name('frontend.privacy');
+    Route::get('/terms', [App\Http\Controllers\Frontend\PageController::class, 'terms'])->name('frontend.terms');
 });
 Route::get('/posts/{slug}', [FrontendController::class, 'showPost'])->name('post.show');
 

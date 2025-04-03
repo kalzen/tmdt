@@ -31,22 +31,22 @@ export function Footer() {
             <h3 className="text-lg font-semibold mb-4">Shop</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/categories" className="text-muted-foreground hover:text-primary">
+                <Link href={route('frontend.categories.index')} className="text-muted-foreground hover:text-primary">
                   All Categories
                 </Link>
               </li>
               <li>
-                <Link href="/products" className="text-muted-foreground hover:text-primary">
+                <Link href={route('frontend.products.index')} className="text-muted-foreground hover:text-primary">
                   Products
                 </Link>
               </li>
               <li>
-                <Link href="/stores" className="text-muted-foreground hover:text-primary">
+                <Link href={route('frontend.stores.index')} className="text-muted-foreground hover:text-primary">
                   Stores
                 </Link>
               </li>
               <li>
-                <Link href="/deals" className="text-muted-foreground hover:text-primary">
+                <Link href={route('frontend.deals')} className="text-muted-foreground hover:text-primary">
                   Deals & Promotions
                 </Link>
               </li>
@@ -57,22 +57,22 @@ export function Footer() {
             <h3 className="text-lg font-semibold mb-4">Customer Service</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/contact" className="text-muted-foreground hover:text-primary">
+                <Link href={route('contact.index')} className="text-muted-foreground hover:text-primary">
                   Contact Us
                 </Link>
               </li>
               <li>
-                <Link href="/faq" className="text-muted-foreground hover:text-primary">
+                <Link href={route('frontend.faq')} className="text-muted-foreground hover:text-primary">
                   FAQ
                 </Link>
               </li>
               <li>
-                <Link href="/shipping" className="text-muted-foreground hover:text-primary">
+                <Link href={route('frontend.shipping')} className="text-muted-foreground hover:text-primary">
                   Shipping & Delivery
                 </Link>
               </li>
               <li>
-                <Link href="/returns" className="text-muted-foreground hover:text-primary">
+                <Link href={route('frontend.returns')} className="text-muted-foreground hover:text-primary">
                   Returns & Refunds
                 </Link>
               </li>
@@ -83,22 +83,22 @@ export function Footer() {
             <h3 className="text-lg font-semibold mb-4">About</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/about" className="text-muted-foreground hover:text-primary">
+                <Link href={route('frontend.about')} className="text-muted-foreground hover:text-primary">
                   About Us
                 </Link>
               </li>
               <li>
-                <Link href="/careers" className="text-muted-foreground hover:text-primary">
+                <Link href={route('frontend.careers')} className="text-muted-foreground hover:text-primary">
                   Careers
                 </Link>
               </li>
               <li>
-                <Link href="/privacy" className="text-muted-foreground hover:text-primary">
+                <Link href={route('frontend.privacy')} className="text-muted-foreground hover:text-primary">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="text-muted-foreground hover:text-primary">
+                <Link href={route('frontend.terms')} className="text-muted-foreground hover:text-primary">
                   Terms of Service
                 </Link>
               </li>

@@ -5,6 +5,7 @@ import { usePage } from '@inertiajs/react';
 import { useEffect } from 'react';
 import { Header } from '@/components/frontend/header';
 import { Footer } from '@/components/frontend/footer';
+import { ChatBot } from '@/components/frontend/chat-bot';
 import '@/../css/frontend.css'; // Import the frontend theme styles using Laravel asset path
 
 interface FrontendLayoutProps {
@@ -96,7 +97,8 @@ export default function FrontendLayout({ children, title, description }: Fronten
                 {children}
             </main>
             <Footer />
-            <Toaster position="top-right" />
+            <ChatBot />
+            <Toaster position="bottom-right" />
         </div>
     );
 }
