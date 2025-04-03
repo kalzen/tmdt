@@ -31,7 +31,7 @@ class HomeController extends Controller
                     'name' => $product->title, // Map title to name
                     'price' => $product->price,
                     'slug' => $product->slug,
-                    'image' => $product->getFirstMediaUrl('product_images') ?: asset('category-placeholder.jpeg'),
+                    'image' => $product->getFirstMediaUrl('thumbnail') ?: asset('category-placeholder.jpeg'),
                     'store' => [
                         'slug' => $product->store->slug,
                         'name' => $product->store->name,
@@ -95,7 +95,7 @@ class HomeController extends Controller
                     'id' => $category->id,
                     'name' => $category->name,
                     'slug' => $category->slug,
-                    'image' => $category->getFirstMediaUrl('image') ?: asset('category-placeholder.jpeg'),
+                    'image' => $category->getFirstMediaUrl('thumbnail') ?: asset('category-placeholder.jpeg'),
                     'productCount' => $category->products_count,
                     'children' => $children,
                 ];

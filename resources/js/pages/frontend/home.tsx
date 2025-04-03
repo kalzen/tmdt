@@ -182,7 +182,10 @@ export default function Home({ featuredProducts, popularStores, categories, slid
                           className="w-full h-full object-cover"
                         />
                         <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent flex flex-col justify-center p-10">
-                          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">{slide.title}</h2>
+                          <h2 
+                            className="text-3xl md:text-4xl font-bold text-white mb-4"
+                            dangerouslySetInnerHTML={{ __html: slide.title }}
+                          ></h2>
                           <p className="text-white/90 mb-6 max-w-md">{slide.description}</p>
                           <div>
                             <Button asChild size="lg" className="bg-primary hover:bg-primary/90">
