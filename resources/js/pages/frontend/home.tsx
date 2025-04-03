@@ -186,7 +186,10 @@ export default function Home({ featuredProducts, popularStores, categories, slid
                             className="text-3xl md:text-4xl font-bold text-white mb-4"
                             dangerouslySetInnerHTML={{ __html: slide.title }}
                           ></h2>
-                          <p className="text-white/90 mb-6 max-w-md">{slide.description}</p>
+                          <p 
+                            className="text-white/90 mb-6 max-w-md"
+                            dangerouslySetInnerHTML={{ __html: slide.description }}
+                          ></p>
                           <div>
                             <Button asChild size="lg" className="bg-primary hover:bg-primary/90">
                               <Link href={slide.link}>Shop Now</Link>
