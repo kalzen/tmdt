@@ -111,7 +111,7 @@ class HomeController extends Controller
             ->map(function ($item) {
                 return [
                     'id' => $item->id,
-                    'image' => $item->getFirstMediaUrl('image') ?: '/assets/images/slider-placeholder.jpg',
+                    'image' => $item->getFirstMediaUrl('slider_image') ?: '/assets/images/slider-placeholder.jpg',
                     'title' => $item->title,
                     'description' => $item->description,
                     'link' => $item->link,

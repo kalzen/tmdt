@@ -35,6 +35,9 @@ Route::namespace('Frontend')->group(function () {
     // Category routes
     Route::get('/category/all', [App\Http\Controllers\Frontend\CategoryController::class, 'index'])->name('frontend.categories.index');
     Route::get('/category/{slug}', [App\Http\Controllers\Frontend\CategoryController::class, 'show'])->name('frontend.categories.show');
+    
+    // Search route
+    Route::get('/search', [App\Http\Controllers\Frontend\SearchController::class, 'search'])->name('frontend.search');
 });
 Route::get('/posts/{slug}', [FrontendController::class, 'showPost'])->name('post.show');
 
@@ -105,4 +108,3 @@ Route::resource('posts', PostController::class)->middleware(['auth', 'verified']
 Route::resource('categories', CategoryController::class)->middleware(['auth', 'verified']);
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
-

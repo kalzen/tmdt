@@ -79,25 +79,28 @@ export default function Products({ products, filters }: ProductsProps) {
   };
 
   const applyFilters = () => {
-    const queryParams = new URLSearchParams();
+    // Create an object with all filter parameters, but filter out undefined values
+    const filterParams: Record<string, string> = {};
     
     if (searchTerm) {
-      queryParams.append('search', searchTerm);
+      filterParams.search = searchTerm;
     }
     
-    queryParams.append('min_price', priceRange[0].toString());
-    queryParams.append('max_price', priceRange[1].toString());
-    queryParams.append('sort_by', sortBy);
-    queryParams.append('sort_direction', sortDirection);
+    filterParams.min_price = priceRange[0].toString();
+    filterParams.max_price = priceRange[1].toString();
+    filterParams.sort_by = sortBy;
+    filterParams.sort_direction = sortDirection;
     
     if (filters.category) {
-      queryParams.append('category', filters.category);
+      filterParams.category = filters.category;
     }
     
     if (filters.store) {
-      queryParams.append('store', filters.store);
+      filterParams.store = filters.store;
     }
     
+    // Create URLSearchParams from the filtered object
+    const queryParams = new URLSearchParams(filterParams);
     window.location.href = `/products?${queryParams.toString()}`;
   };
 
@@ -222,7 +225,11 @@ export default function Products({ products, filters }: ProductsProps) {
             {filters.search && (
               <div className="bg-muted rounded-full px-3 py-1 text-sm flex items-center">
                 <span className="mr-1">Search: {filters.search}</span>
-                <Link href={`/products?${new URLSearchParams({ ...filters, search: undefined }).toString()}`}>
+                <Link href={`/products?${new URLSearchParams(
+                  Object.entries({ ...filters })
+                    .filter(([key]) => key !== 'search')
+                    .reduce((obj, [key, value]) => ({ ...obj, [key]: value }), {})
+                ).toString()}`}>
                   <X className="h-3 w-3" />
                 </Link>
               </div>
@@ -231,7 +238,11 @@ export default function Products({ products, filters }: ProductsProps) {
             {(filters.min_price || filters.max_price) && (
               <div className="bg-muted rounded-full px-3 py-1 text-sm flex items-center">
                 <span className="mr-1">Price: ${filters.min_price || 0} - ${filters.max_price || 1000}</span>
-                <Link href={`/products?${new URLSearchParams({ ...filters, min_price: undefined, max_price: undefined }).toString()}`}>
+                <Link href={`/products?${new URLSearchParams(
+                  Object.entries({ ...filters })
+                    .filter(([key]) => key !== 'min_price' && key !== 'max_price')
+                    .reduce((obj, [key, value]) => ({ ...obj, [key]: value }), {})
+                ).toString()}`}>
                   <X className="h-3 w-3" />
                 </Link>
               </div>
@@ -240,7 +251,11 @@ export default function Products({ products, filters }: ProductsProps) {
             {filters.category && (
               <div className="bg-muted rounded-full px-3 py-1 text-sm flex items-center">
                 <span className="mr-1">Category: {filters.category}</span>
-                <Link href={`/products?${new URLSearchParams({ ...filters, category: undefined }).toString()}`}>
+                <Link href={`/products?${new URLSearchParams(
+                  Object.entries({ ...filters })
+                    .filter(([key]) => key !== 'category')
+                    .reduce((obj, [key, value]) => ({ ...obj, [key]: value }), {})
+                ).toString()}`}>
                   <X className="h-3 w-3" />
                 </Link>
               </div>
@@ -249,7 +264,11 @@ export default function Products({ products, filters }: ProductsProps) {
             {filters.store && (
               <div className="bg-muted rounded-full px-3 py-1 text-sm flex items-center">
                 <span className="mr-1">Store: {filters.store}</span>
-                <Link href={`/products?${new URLSearchParams({ ...filters, store: undefined }).toString()}`}>
+                <Link href={`/products?${new URLSearchParams(
+                  Object.entries({ ...filters })
+                    .filter(([key]) => key !== 'store')
+                    .reduce((obj, [key, value]) => ({ ...obj, [key]: value }), {})
+                ).toString()}`}>
                   <X className="h-3 w-3" />
                 </Link>
               </div>

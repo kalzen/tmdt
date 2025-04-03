@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link } from '@inertiajs/react';
+import React, { useState, useEffect } from 'react';
+import { Link, usePage } from '@inertiajs/react';
 import { User, Search, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -49,6 +49,21 @@ interface HeaderProps {
 
 export function Header({ siteTitle = 'TMDT', logoPath }: HeaderProps) {
   const [searchType, setSearchType] = useState<'products' | 'stores'>('products');
+  const [searchKeyword, setSearchKeyword] = useState('');
+  
+  // Get the current URL to check for keyword parameter
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const keywordParam = urlParams.get('keyword');
+    if (keywordParam) {
+      setSearchKeyword(keywordParam);
+    }
+    
+    const typeParam = urlParams.get('type');
+    if (typeParam === 'products' || typeParam === 'stores') {
+      setSearchType(typeParam);
+    }
+  }, []);
 
   return (
     <header className="w-full border-b place-items-center bg-background">
@@ -191,29 +206,39 @@ export function Header({ siteTitle = 'TMDT', logoPath }: HeaderProps) {
         
         {/* Search Bar - Below the navigation */}
         <div className="py-3">
-          <div className="flex w-full max-w-3xl mx-auto rounded-full overflow-hidden border-orange-500 border-solid border-2">
-            <div className="flex-shrink-0 w-28">
-              <Select value={searchType} onValueChange={(value) => setSearchType(value as 'products' | 'stores')}>
-                <SelectTrigger className="border-0 border-r-1 rounded-none">
-                  <SelectValue placeholder="Search in" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="products">Products</SelectItem>
-                  <SelectItem value="stores">Stores</SelectItem>
-                </SelectContent>
-              </Select>
+          <form action={route('frontend.search')} method="get">
+            <div className="flex w-full max-w-3xl mx-auto rounded-full overflow-hidden border-orange-500 border-solid border-2">
+              <div className="flex-shrink-0 w-28">
+                <Select 
+                  name="type" 
+                  value={searchType} 
+                  onValueChange={(value) => setSearchType(value as 'products' | 'stores')}
+                >
+                  <SelectTrigger className="border-0 border-r-1 rounded-none">
+                    <SelectValue placeholder="Search in" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="products">Products</SelectItem>
+                    <SelectItem value="stores">Stores</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex flex-1 relative">
+                <Input 
+                  name="keyword"
+                  type="search" 
+                  placeholder={searchType === 'products' ? "Search for products..." : "Search for stores..."}
+                  className="flex-1 border-0 rounded-full h-full" 
+                  value={searchKeyword}
+                  onChange={(e) => setSearchKeyword(e.target.value)}
+                  required
+                />
+                <Button type="submit" className="rounded-full absolute h-full right-0 px-3 pr-3 pl-3 flex items-center border-rounded bg-orange-500">
+                  <Search className="h-4 w-4" /> Search
+                </Button>
+              </div>
             </div>
-            <div className="flex flex-1 relative">
-              <Input 
-                type="search" 
-                placeholder={searchType === 'products' ? "Search for products..." : "Search for stores..."}
-                className="flex-1 border-0 rounded-full h-full" 
-              />
-              <Button type="submit" className="rounded-full absolute  h-full right-0 px-3 pr-3 pl-3 flex items-center border-rounded bg-orange-500">
-                <Search className="h-4 w-4 " /> Search
-              </Button>
-            </div>
-          </div>
+          </form>
         </div>
       </div>
     </header>
