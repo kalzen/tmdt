@@ -193,12 +193,12 @@ export default function CatalogueIndex({ catalogues, filters }: Props) {
                 {catalogues && catalogues.data && catalogues.data.length > 0 && (
                     <div className="mt-4 border-t pt-4">
                         <CustomPagination
-                            currentPage={catalogues.meta?.current_page || 1}
-                            lastPage={catalogues.meta?.last_page || 1}
+                            currentPage={catalogues.meta.current_page}
+                            lastPage={catalogues.meta.last_page}
                             perPage={parseInt(filters.per_page || '10')}
-                            total={catalogues.meta?.total || catalogues.data.length}
-                            from={catalogues.meta?.from || 1}
-                            to={catalogues.meta?.to || catalogues.data.length}
+                            total={catalogues.meta.total}
+                            from={catalogues.meta.from}
+                            to={catalogues.meta.to}
                             onPageChange={(page: number) => {
                                 router.get(
                                     route('catalogues.index'), 

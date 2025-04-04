@@ -20,19 +20,46 @@ class CatalogueController extends Controller
         $filters = $request->only(['search', 'per_page']);
         $per_page = $filters['per_page'] ?? 10;
 
-        $catalogues = Catalogue::query()
+        $query = Catalogue::query()
             ->when($request->filled('search'), function ($query) use ($request) {
                 $query->where('name', 'like', '%' . $request->search . '%')
                     ->orWhere('description', 'like', '%' . $request->search . '%');
             })
             ->withCount('products')
             ->orderBy('level', 'asc')
-            ->orderBy('position', 'asc')
-            ->paginate($per_page)
-            ->withQueryString();
+            ->orderBy('position', 'asc');
+            
+        $catalogues = $query->paginate($per_page)->withQueryString();
+        
+        // Format the data for the frontend with consistent structure
+        $formattedData = [
+            'data' => collect($catalogues->items())->map(function ($catalogue) {
+                return [
+                    'id' => $catalogue->id,
+                    'name' => $catalogue->name,
+                    'slug' => $catalogue->slug,
+                    'description' => $catalogue->description,
+                    'parent_id' => $catalogue->parent_id,
+                    'level' => $catalogue->level,
+                    'position' => $catalogue->position,
+                    'is_active' => $catalogue->is_active,
+                    'products_count' => $catalogue->products_count,
+                    'created_at' => $catalogue->created_at->format('Y-m-d H:i:s'),
+                    'thumbnail' => $catalogue->getFirstMediaUrl('thumbnail'),
+                ];
+            })->toArray(),
+            'meta' => [
+                'current_page' => $catalogues->currentPage(),
+                'from' => $catalogues->firstItem() ?? 0,
+                'last_page' => $catalogues->lastPage(),
+                'per_page' => $catalogues->perPage(),
+                'to' => $catalogues->lastItem() ?? 0,
+                'total' => $catalogues->total(),
+            ],
+        ];
 
         return Inertia::render('Catalogues/Index', [
-            'catalogues' => $catalogues,
+            'catalogues' => $formattedData,
             'filters' => $filters
         ]);
     }

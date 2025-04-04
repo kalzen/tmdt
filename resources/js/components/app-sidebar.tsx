@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, Settings, UserRound, Cuboid, Tags, Package, List, Store } from 'lucide-react';
+import { BookOpen, Folder, LayoutGrid, Settings, UserRound, Cuboid, Tags, Package, List, Store, Users } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -52,6 +52,11 @@ const mainNavItems: NavItem[] = [
         title: 'Thành Viên',
         href: route('members.index'),
         icon: UserRound,
+    },
+    {
+        title: 'Quản lý User',
+        href: route('users.index'),
+        icon: Users,
     },
     {
         title: 'Slider',

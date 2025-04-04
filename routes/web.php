@@ -76,9 +76,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Thêm routes cho Config
     Route::resource('configs', ConfigController::class)->except(['show']);
     
-    // Thêm routes cho Member
-    Route::resource('members', MemberController::class);
-    Route::post('members/update-order', [MemberController::class, 'updateOrder'])->name('members.update-order');
+    // Thêm routes cho Member với middleware admin
+    
+        Route::resource('members', MemberController::class);
+        Route::post('members/update-order', [MemberController::class, 'updateOrder'])
+            ->name('members.update-order');
+            
+        // Add User management routes - also protected by admin middleware
+        Route::resource('users', \App\Http\Controllers\UserController::class);
+
     
     // Thêm routes cho Activity Log
     Route::resource('activity-logs', ActivityLogController::class)

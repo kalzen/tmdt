@@ -46,8 +46,33 @@ class StoreController extends Controller
             ->paginate($per_page)
             ->withQueryString();
             
+        // Format the data for the frontend with consistent structure
+        $formattedData = [
+            'data' => collect($stores->items())->map(function ($store) {
+                return [
+                    'id' => $store->id,
+                    'name' => $store->name,
+                    'slug' => $store->slug,
+                    'is_active' => $store->is_active,
+                    'is_featured' => $store->is_featured,
+                    'products_count' => $store->products_count,
+                    'user' => $store->user,
+                    'created_at' => $store->created_at->format('Y-m-d H:i:s'),
+                    'logo' => $store->getFirstMediaUrl('logo'),
+                ];
+            })->toArray(),
+            'meta' => [
+                'current_page' => $stores->currentPage(),
+                'from' => $stores->firstItem() ?? 0,
+                'last_page' => $stores->lastPage(),
+                'per_page' => $stores->perPage(),
+                'to' => $stores->lastItem() ?? 0,
+                'total' => $stores->total(),
+            ],
+        ];
+            
         return Inertia::render('Stores/Index', [
-            'stores' => $stores,
+            'stores' => $formattedData,
             'filters' => $filters,
         ]);
     }

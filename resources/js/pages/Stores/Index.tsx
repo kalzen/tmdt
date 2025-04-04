@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Pagination } from '@/components/ui/pagination';
+import { CustomPagination } from '@/components/custom-pagination';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { MoreHorizontal, Pencil, Trash2, Eye, XCircle, PlusCircle, Store as StoreIcon } from 'lucide-react';
 import { __ } from '@/utils/translate';
@@ -259,15 +259,27 @@ export default function StoreIndex({ stores, filters }: Props) {
                 {/* Pagination */}
                 {stores.meta && stores.meta.total > 0 && (
                     <div className="mt-4 border-t pt-4">
-                        <Pagination
+                        <CustomPagination
                             currentPage={stores.meta.current_page}
                             lastPage={stores.meta.last_page}
                             perPage={parseInt(filters.per_page || '10')}
                             total={stores.meta.total}
-                            from={stores.meta.from || 0}
-                            to={stores.meta.to || 0}
-                            onPageChange={handlePageChange}
-                            onPerPageChange={handlePerPageChange}
+                            from={stores.meta.from}
+                            to={stores.meta.to}
+                            onPageChange={(page: number) => {
+                                router.get(
+                                  route('stores.index'),
+                                  { ...filters, page },
+                                  { preserveState: true, preserveScroll: true }
+                                );
+                              }}
+                              onPerPageChange={(perPage: number) => {
+                                router.get(
+                                  route('stores.index'),
+                                  { ...filters, per_page: perPage, page: 1 },
+                                  { preserveState: true }
+                                );
+                              }}
                         />
                     </div>
                 )}

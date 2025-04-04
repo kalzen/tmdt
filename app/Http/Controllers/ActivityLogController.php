@@ -57,11 +57,38 @@ class ActivityLogController extends Controller
             });
         }
         
-        $logs = $query->paginate($request->input('per_page', 15))
+        $perPage = $request->input('per_page', 15);
+        $logs = $query->paginate($perPage)
             ->withQueryString();
         
+        // Format the data for consistent structure
+        $formattedData = [
+            'data' => collect($logs->items())->map(function ($log) {
+                return [
+                    'id' => $log->id,
+                    'user_id' => $log->user_id,
+                    'user_name' => $log->user_name,
+                    'action' => $log->action,
+                    'model_type' => $log->model_type,
+                    'model_id' => $log->model_id,
+                    'description' => $log->description,
+                    'properties' => $log->properties,
+                    'ip_address' => $log->ip_address,
+                    'created_at' => $log->created_at->format('Y-m-d H:i:s'),
+                ];
+            })->toArray(),
+            'meta' => [
+                'current_page' => $logs->currentPage(),
+                'from' => $logs->firstItem() ?? 0,
+                'last_page' => $logs->lastPage(),
+                'per_page' => $logs->perPage(),
+                'to' => $logs->lastItem() ?? 0,
+                'total' => $logs->total(),
+            ],
+        ];
+        
         return Inertia::render('activity-logs/index', [
-            'logs' => $logs,
+            'logs' => $formattedData,
             'filters' => $request->only(['search', 'model', 'action', 'user_id']),
             'actions' => ActivityLog::actions(),
         ]);

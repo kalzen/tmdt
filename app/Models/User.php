@@ -29,6 +29,7 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
         'email',
         'password',
         'is_admin', // Thêm is_admin vào danh sách fillable
+        'is_gold', // Add is_gold field
     ];
 
     /**
@@ -62,6 +63,7 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_admin' => 'boolean', // Thêm casting cho is_admin
+            'is_gold' => 'boolean', // Add casting for is_gold
         ];
     }
 
