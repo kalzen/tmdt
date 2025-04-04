@@ -46,7 +46,7 @@ class SearchController extends Controller
                         'slug' => $product->slug,
                         'price' => $product->price,
                         'sale_price' => $product->sale_price,
-                        'image' => $product->getFirstMediaUrl('product_images') ?: asset('category-placeholder.jpeg'),
+                        'image' => $product->getFirstMediaUrl('thumbnail') ?: asset('category-placeholder.jpeg'),
                         'store' => $product->store ? [
                             'id' => $product->store->id,
                             'name' => $product->store->name,

@@ -34,7 +34,7 @@ class StoreController extends Controller
                     'name' => $product->title,
                     'slug' => $product->slug,
                     'price' => $product->price,
-                    'image' => $product->getFirstMediaUrl('product_images') ?: '/assets/images/placeholder.jpg',
+                    'image' => $product->getFirstMediaUrl('thumbnail') ?: '/assets/images/placeholder.jpg',
                     'category' => $product->catalogues->isNotEmpty() ? [
                         'id' => $product->catalogues->first()->id,
                         'name' => $product->catalogues->first()->name,
@@ -63,7 +63,7 @@ class StoreController extends Controller
                     'name' => $product->title,
                     'slug' => $product->slug,
                     'price' => $product->price,
-                    'image' => $product->getFirstMediaUrl('product_images') ?: '/assets/images/placeholder.jpg',
+                    'image' => $product->getFirstMediaUrl('thumbnail') ?: '/assets/images/placeholder.jpg',
                     'category' => $product->catalogues->isNotEmpty() ? [
                         'id' => $product->catalogues->first()->id, 
                         'name' => $product->catalogues->first()->name,
@@ -107,7 +107,7 @@ class StoreController extends Controller
                     'name' => $product->title,
                     'slug' => $product->slug,
                     'price' => $product->price,
-                    'image' => $product->getFirstMediaUrl('product_images') ?: '/assets/images/placeholder.jpg',
+                    'image' => $product->getFirstMediaUrl('thumbnail') ?: '/assets/images/placeholder.jpg',
                     'category' => $product->catalogues->isNotEmpty() ? [
                         'id' => $product->catalogues->first()->id,
                         'name' => $product->catalogues->first()->name,

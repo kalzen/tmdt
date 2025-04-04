@@ -165,7 +165,7 @@ class DemoStoreService
             if (file_exists($productImageUrl)) {
                 $product->addMedia($productImageUrl)
                     ->preservingOriginal()
-                    ->toMediaCollection('product_images');
+                    ->toMediaCollection('thumbnail');
                     
                 // Add additional images to gallery for some products
                 if (rand(0, 1)) {

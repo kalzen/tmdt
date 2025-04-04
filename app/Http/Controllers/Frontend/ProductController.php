@@ -37,7 +37,7 @@ class ProductController extends Controller
                     'slug' => $relatedProduct->slug,
                     'price' => $relatedProduct->price,
                     'sale_price' => $relatedProduct->sale_price,
-                    'image' => $relatedProduct->getFirstMediaUrl('product_images') ?: asset('product-placeholder.jpeg'),
+                    'image' => $relatedProduct->getFirstMediaUrl('thumbnail') ?: asset('product-placeholder.jpeg'),
                     'store' => [
                         'id' => $relatedProduct->store->id,
                         'name' => $relatedProduct->store->name,
@@ -175,7 +175,7 @@ class ProductController extends Controller
                     'id' => $product->id,
                     'name' => $product->name,
                     'price' => $product->price,
-                    'image' => $product->getFirstMediaUrl('product_images') ?: '/assets/images/placeholder.jpg',
+                    'image' => $product->getFirstMediaUrl('thumbnail') ?: '/assets/images/placeholder.jpg',
                     'store' => [
                         'id' => $product->store->id,
                         'name' => $product->store->name,
