@@ -32,7 +32,7 @@ export function ChatBot() {
   // Initialize chat session
   useEffect(() => {
     // Try to load existing session from localStorage
-    const savedSession = localStorage.getItem('tmdt_chat_session');
+    const savedSession = localStorage.getItem('84Gate_chat_session');
     
     if (savedSession) {
       try {
@@ -92,7 +92,7 @@ export function ChatBot() {
         sessionId,
         messages,
       };
-      localStorage.setItem('tmdt_chat_session', JSON.stringify(session));
+      localStorage.setItem('84Gate_chat_session', JSON.stringify(session));
     }
   }, [sessionId, messages]);
 

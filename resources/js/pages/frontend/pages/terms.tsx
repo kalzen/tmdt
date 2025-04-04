@@ -30,7 +30,7 @@ const Terms: React.FC<Props> = ({ title, description }) => {
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground">
-                By accessing and using TMDT Marketplace, you acknowledge that you have read,
+                By accessing and using 84Gate Marketplace, you acknowledge that you have read,
                 understood, and agree to be bound by these Terms of Service. If you do not
                 agree with any part of these terms, you must not use our services.
               </p>
@@ -107,7 +107,7 @@ const Terms: React.FC<Props> = ({ title, description }) => {
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground">
-                All content on TMDT Marketplace, including but not limited to text, graphics, 
+                All content on 84Gate Marketplace, including but not limited to text, graphics, 
                 logos, and software, is our property or the property of our licensors and is 
                 protected by copyright and other intellectual property laws.
               </p>

@@ -30,7 +30,7 @@ const About: React.FC<Props> = ({ title, description }) => {
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground">
-                TMDT Marketplace was founded with a vision to create a seamless online shopping experience 
+                84Gate Marketplace was founded with a vision to create a seamless online shopping experience 
                 that connects quality sellers with discerning buyers. Our platform serves as a bridge 
                 between traditional retail and the digital future of commerce.
               </p>

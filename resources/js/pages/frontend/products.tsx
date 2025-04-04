@@ -110,7 +110,7 @@ export default function Products({ products, filters }: ProductsProps) {
 
   return (
     <FrontendLayout>
-      <Head title="Products - TMDT Marketplace" />
+      <Head title="Products - 84Gate Marketplace" />
       
       <div className="container px-4 py-8 mx-auto">
         {/* Breadcrumbs */}

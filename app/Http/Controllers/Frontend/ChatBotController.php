@@ -53,7 +53,7 @@ class ChatBotController extends Controller
         // Contact related questions
         'contact' => [
             'pattern' => '/contact|reach|call|phone|email|support|help|service|talk|chat/i',
-            'response' => 'You can contact our customer service team via email at support@tmdt.com or by phone at 1900-1234. You can also visit our <a href="/contact" class="text-primary hover:underline">contact page</a> for more options.',
+            'response' => 'You can contact our customer service team via email at support@84Gate.com or by phone at 1900-1234. You can also visit our <a href="/contact" class="text-primary hover:underline">contact page</a> for more options.',
         ],
         
         // Account related questions
@@ -65,7 +65,7 @@ class ChatBotController extends Controller
         // About related questions
         'about' => [
             'pattern' => '/about|company|who are you|history|mission|vision/i',
-            'response' => 'TMDT Marketplace is a trusted e-commerce platform connecting buyers with verified sellers. Learn more about us at our <a href="/about" class="text-primary hover:underline">about page</a>.',
+            'response' => '84Gate Marketplace is a trusted e-commerce platform connecting buyers with verified sellers. Learn more about us at our <a href="/about" class="text-primary hover:underline">about page</a>.',
         ],
         
         // FAQ related questions
@@ -87,7 +87,7 @@ class ChatBotController extends Controller
         // Greetings
         'greeting' => [
             'pattern' => '/^(hi|hello|hey|greetings|good morning|good afternoon|good evening|howdy)/i',
-            'response' => 'Hello! Welcome to TMDT Marketplace. How can I help you today?',
+            'response' => 'Hello! Welcome to 84Gate Marketplace. How can I help you today?',
         ],
         'thanks' => [
             'pattern' => '/thank|thanks|appreciate|grateful/i',
@@ -156,7 +156,7 @@ class ChatBotController extends Controller
                 $response = $client->chat()->create([
                     'model' => 'gpt-3.5-turbo',
                     'messages' => [
-                        ['role' => 'system', 'content' => 'You are a helpful assistant for the TMDT Marketplace e-commerce website. Provide concise, accurate information about products, shipping, payment methods, and other e-commerce related questions. Keep responses brief and focused on helping customers.'],
+                        ['role' => 'system', 'content' => 'You are a helpful assistant for the 84Gate Marketplace e-commerce website. Provide concise, accurate information about products, shipping, payment methods, and other e-commerce related questions. Keep responses brief and focused on helping customers.'],
                         ['role' => 'user', 'content' => $userMessage],
                     ],
                     'temperature' => 0.7,

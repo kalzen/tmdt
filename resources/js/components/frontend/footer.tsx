@@ -7,7 +7,7 @@ export function Footer() {
       <div className="container px-4 py-12 mx-auto">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           <div>
-            <h3 className="text-lg font-semibold mb-4">TMDT</h3>
+            <h3 className="text-lg font-semibold mb-4">84Gate</h3>
             <p className="text-sm text-muted-foreground mb-4">
               Your trusted marketplace for quality products from verified sellers.
             </p>
@@ -108,7 +108,7 @@ export function Footer() {
         
         <div className="border-t mt-12 pt-8">
           <p className="text-sm text-center text-muted-foreground">
-            &copy; {new Date().getFullYear()} TMDT Marketplace. All rights reserved.
+            &copy; {new Date().getFullYear()} 84Gate Marketplace. All rights reserved.
           </p>
         </div>
       </div>

@@ -26,7 +26,7 @@ interface CategoriesProps {
 export default function Categories({ categories }: CategoriesProps) {
   return (
     <FrontendLayout>
-      <Head title="Categories - TMDT Marketplace" />
+      <Head title="Categories - 84Gate Marketplace" />
       
       <div className="container px-4 py-8 mx-auto">
         {/* Breadcrumbs */}

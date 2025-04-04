@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { Link } from '@inertiajs/react';
-import { List, ChevronRight } from 'lucide-react';
+import { List, ChevronRight, Crown, ShieldCheck } from 'lucide-react';
 import { formatCurrency } from '@/utils/helpers';
 
 interface Product {
@@ -27,6 +27,8 @@ interface Store {
   logo: string;
   slug: string;
   productCount: number;
+  is_gold: boolean;
+  is_verified: boolean;
 }
 
 interface Category {
@@ -245,7 +247,7 @@ export default function Home({ featuredProducts, popularStores, categories, slid
       </section>
       
       {/* Featured Products */}
-      <section className="py-12">
+      <section className="py-12 w-full bg-slate-50">
         <div className="container px-4 mx-auto">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl font-bold">Featured Products</h2>
@@ -288,7 +290,7 @@ export default function Home({ featuredProducts, popularStores, categories, slid
       </section>
       
       {/* Popular Stores */}
-      <section className="py-12 bg-slate-50 w-full">
+      <section className="py-12 bg-slate-100 w-full">
         <div className="container px-4 mx-auto">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl font-bold">Popular Stores</h2>
@@ -312,7 +314,24 @@ export default function Home({ featuredProducts, popularStores, categories, slid
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <h3 className="font-medium text-center group-hover:text-primary transition-colors">{store.name}</h3>
+                  <h3 className="font-medium text-center group-hover:text-primary transition-colors mb-2">{store.name}</h3>
+                  <div className={`flex items-center justify-center gap-1 px-2 py-1 rounded-full text-xs mx-auto w-fit mb-2 ${
+                    store.is_gold 
+                      ? "text-yellow-500 bg-yellow-50"
+                      : "text-blue-500 bg-blue-50"
+                  }`}>
+                    {store.is_gold ? (
+                      <>
+                        <Crown className="h-3 w-3" />
+                        <span>Gold Member</span>
+                      </>
+                    ) : (
+                      <>
+                        <ShieldCheck className="h-3 w-3" />
+                        <span>Verified</span>
+                      </>
+                    )}
+                  </div>
                   <p className="text-sm text-center text-muted-foreground">{store.productCount} products</p>
                 </div>
               </Link>
@@ -324,7 +343,7 @@ export default function Home({ featuredProducts, popularStores, categories, slid
       {/* Call to Action */}
       <section className="py-16 bg-primary text-primary-foreground w-full">
         <div className="container px-4 mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-4">Start Selling on TMDT Marketplace</h2>
+          <h2 className="text-3xl font-bold mb-4">Start Selling on 84Gate Marketplace</h2>
           <p className="max-w-2xl mx-auto mb-8">
             Join thousands of successful sellers on our platform. Reach millions of customers and grow your business.
           </p>

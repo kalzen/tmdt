@@ -33,6 +33,8 @@ class Store extends Model implements HasMedia
         'user_id',
         'meta_title',
         'meta_description',
+        'tax_number',
+        'bio',
     ];
 
     protected $casts = [

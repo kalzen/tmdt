@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Link } from '@inertiajs/react';
-import { Star, MapPin, Mail, Phone, Clock, ExternalLink } from 'lucide-react';
+import { Star, MapPin, Mail, Phone, Clock, ExternalLink, Crown, ShieldCheck, Building2 } from 'lucide-react';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 
 interface Product {
@@ -46,9 +46,13 @@ interface Store {
   phone: string;
   website: string;
   openingHours: string;
+  tax_number: string;
+  bio: string;
   categories: Category[];
   featuredProducts: Product[];
   newProducts: Product[];
+  is_gold: boolean;
+  is_verified: boolean;
 }
 
 interface StoreDetailProps {
@@ -80,7 +84,7 @@ interface StoreDetailProps {
 export default function StoreDetail({ store, products }: StoreDetailProps) {
   return (
     <FrontendLayout>
-      <Head title={`${store.name} - TMDT Marketplace`} />
+      <Head title={`${store.name} - 84Gate Marketplace`} />
       
       <div className="container px-4 py-8 mx-auto">
         {/* Breadcrumbs */}
@@ -123,7 +127,20 @@ export default function StoreDetail({ store, products }: StoreDetailProps) {
         <div className="pt-12 md:pt-8 md:pl-40 mb-12">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold">{store.name}</h1>
+              <div className="flex items-center gap-2">
+                <h1 className="text-2xl md:text-3xl font-bold">{store.name}</h1>
+                {store.is_gold ? (
+                  <div className="text-yellow-500 bg-yellow-50 px-2 py-1 rounded-full text-xs flex items-center gap-1">
+                    <Crown className="h-3 w-3" />
+                    <span>Gold Member</span>
+                  </div>
+                ) : store.is_verified && (
+                  <div className="text-blue-500 bg-blue-50 px-2 py-1 rounded-full text-xs flex items-center gap-1">
+                    <ShieldCheck className="h-3 w-3" />
+                    <span>Verified</span>
+                  </div>
+                )}
+              </div>
               <div className="flex items-center mt-1">
                 <div className="flex items-center">
                   {Array.from({ length: 5 }).map((_, i) => (
@@ -181,50 +198,38 @@ export default function StoreDetail({ store, products }: StoreDetailProps) {
             <TabsTrigger value="about">About</TabsTrigger>
           </TabsList>
           
+          {/* Products Tab Content */}
           <TabsContent value="products">
             {/* Featured Products */}
             {store.featuredProducts.length > 0 && (
               <div className="mb-12">
                 <h2 className="text-xl font-bold mb-6">Featured Products</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {store.featuredProducts.map((product) => (
-                    <Card key={product.id} className="group overflow-hidden">
-                      <div className="aspect-square relative overflow-hidden">
-                        <img 
-                          src={product.image} 
-                          alt={product.name}
-                          className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                        />
-                      </div>
-                      <CardContent className="p-4">
-                        <Link 
-                          href={route('frontend.products.show', product.slug || product.id)}
-                          className="font-medium line-clamp-2 group-hover:text-primary transition-colors"
-                        >
-                          {product.name}
-                        </Link>
-                        <div className="flex items-center justify-between mt-2">
-                          <span className="font-bold text-primary">${product.price.toFixed(2)}</span>
-                          <div className="flex gap-1 flex-wrap justify-end">
-                            {product.categories && product.categories.length > 0 ? (
-                              <div className="flex flex-wrap gap-1 justify-end">
-                                {product.categories.slice(0, 1).map(cat => (
-                                  <span key={cat.id} className="text-xs text-muted-foreground">
-                                    {cat.name}
-                                  </span>
-                                ))}
-                                {product.categories.length > 1 && (
-                                  <span className="text-xs text-muted-foreground">+{product.categories.length - 1}</span>
-                                )}
-                              </div>
-                            ) : (
-                              <span className="text-xs text-muted-foreground">
-                                Uncategorized
-                              </span>
-                            )}
-                          </div>
+                    <Card key={product.id} className="overflow-hidden">
+                      <Link href={`/products/${product.slug}`}>
+                        <div className="aspect-square overflow-hidden">
+                          <img
+                            src={product.image}
+                            alt={product.name}
+                            className="w-full h-full object-cover transition-transform hover:scale-105"
+                          />
                         </div>
-                      </CardContent>
+                        <CardContent className="p-4">
+                          {product.category && (
+                            <Link
+                              href={`/categories/${product.category.slug}`}
+                              className="text-xs text-muted-foreground hover:text-primary"
+                            >
+                              {product.category.name}
+                            </Link>
+                          )}
+                          <h3 className="font-medium mt-1 mb-2 line-clamp-2">{product.name}</h3>
+                          <p className="font-bold text-primary">
+                            ${product.price.toLocaleString()}
+                          </p>
+                        </CardContent>
+                      </Link>
                     </Card>
                   ))}
                 </div>
@@ -234,46 +239,33 @@ export default function StoreDetail({ store, products }: StoreDetailProps) {
             {/* New Products */}
             {store.newProducts.length > 0 && (
               <div className="mb-12">
-                <h2 className="text-xl font-bold mb-6">New Arrivals</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                <h2 className="text-xl font-bold mb-6">New Products</h2>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {store.newProducts.map((product) => (
-                    <Card key={product.id} className="group overflow-hidden">
-                      <div className="aspect-square relative overflow-hidden">
-                        <img 
-                          src={product.image} 
-                          alt={product.name}
-                          className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                        />
-                      </div>
-                      <CardContent className="p-4">
-                        <Link 
-                          href={route('frontend.products.show', product.slug || product.id)}
-                          className="font-medium line-clamp-2 group-hover:text-primary transition-colors"
-                        >
-                          {product.name}
-                        </Link>
-                        <div className="flex items-center justify-between mt-2">
-                          <span className="font-bold text-primary">${product.price.toFixed(2)}</span>
-                          <div className="flex gap-1 flex-wrap justify-end">
-                            {product.categories && product.categories.length > 0 ? (
-                              <div className="flex flex-wrap gap-1 justify-end">
-                                {product.categories.slice(0, 1).map(cat => (
-                                  <span key={cat.id} className="text-xs text-muted-foreground">
-                                    {cat.name}
-                                  </span>
-                                ))}
-                                {product.categories.length > 1 && (
-                                  <span className="text-xs text-muted-foreground">+{product.categories.length - 1}</span>
-                                )}
-                              </div>
-                            ) : (
-                              <span className="text-xs text-muted-foreground">
-                                Uncategorized
-                              </span>
-                            )}
-                          </div>
+                    <Card key={product.id} className="overflow-hidden">
+                      <Link href={`/products/${product.slug}`}>
+                        <div className="aspect-square overflow-hidden">
+                          <img
+                            src={product.image}
+                            alt={product.name}
+                            className="w-full h-full object-cover transition-transform hover:scale-105"
+                          />
                         </div>
-                      </CardContent>
+                        <CardContent className="p-4">
+                          {product.category && (
+                            <Link
+                              href={`/categories/${product.category.slug}`}
+                              className="text-xs text-muted-foreground hover:text-primary"
+                            >
+                              {product.category.name}
+                            </Link>
+                          )}
+                          <h3 className="font-medium mt-1 mb-2 line-clamp-2">{product.name}</h3>
+                          <p className="font-bold text-primary">
+                            ${product.price.toLocaleString()}
+                          </p>
+                        </CardContent>
+                      </Link>
                     </Card>
                   ))}
                 </div>
@@ -283,97 +275,69 @@ export default function StoreDetail({ store, products }: StoreDetailProps) {
             {/* All Products */}
             <div>
               <h2 className="text-xl font-bold mb-6">All Products</h2>
-              {products && products.data && products.data.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                  {products.data.map((product) => (
-                    <Card key={product.id} className="group overflow-hidden">
-                      <div className="aspect-square relative overflow-hidden">
-                        <img 
-                          src={product.image} 
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                {products.data.map((product) => (
+                  <Card key={product.id} className="overflow-hidden">
+                    <Link href={`/products/${product.slug}`}>
+                      <div className="aspect-square overflow-hidden">
+                        <img
+                          src={product.image}
                           alt={product.name}
-                          className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                          className="w-full h-full object-cover transition-transform hover:scale-105"
                         />
                       </div>
                       <CardContent className="p-4">
-                        <Link 
-                          href={route('frontend.products.show', product.slug || product.id)}
-                          className="font-medium line-clamp-2 group-hover:text-primary transition-colors"
-                        >
-                          {product.name}
-                        </Link>
-                        <div className="flex items-center justify-between mt-2">
-                          <span className="font-bold text-primary">${product.price.toFixed(2)}</span>
-                          <div className="flex gap-1 flex-wrap justify-end">
-                            {product.categories && product.categories.length > 0 ? (
-                              <div className="flex flex-wrap gap-1 justify-end">
-                                {product.categories.slice(0, 1).map(cat => (
-                                  <span key={cat.id} className="text-xs text-muted-foreground">
-                                    {cat.name}
-                                  </span>
-                                ))}
-                                {product.categories.length > 1 && (
-                                  <span className="text-xs text-muted-foreground">+{product.categories.length - 1}</span>
-                                )}
-                              </div>
-                            ) : (
-                              <span className="text-xs text-muted-foreground">
-                                Uncategorized
-                              </span>
-                            )}
-                          </div>
-                        </div>
+                        {product.category && (
+                          <Link
+                            href={`/categories/${product.category.slug}`}
+                            className="text-xs text-muted-foreground hover:text-primary"
+                          >
+                            {product.category.name}
+                          </Link>
+                        )}
+                        <h3 className="font-medium mt-1 mb-2 line-clamp-2">{product.name}</h3>
+                        <p className="font-bold text-primary">
+                          ${product.price.toLocaleString()}
+                        </p>
                       </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-center text-muted-foreground">No products found for this store.</p>
-              )}
-              {/* Pagination */}
-              {products && products.meta && products.meta.last_page > 1 && (
-                <div className="flex justify-center mt-8">
-                  {products.links.map((link, i) => (
-                    <Link
-                      key={i}
-                      href={link.url || '#'}
-                      className={`px-4 py-2 text-sm border-t border-b ${
-                        i === 0 ? 'rounded-l-md border-l' : ''
-                      } ${
-                        i === products.links.length - 1 ? 'rounded-r-md border-r' : ''
-                      } ${
-                        link.active
-                          ? 'bg-primary text-primary-foreground'
-                          : 'bg-background hover:bg-muted'
-                      } ${!link.url ? 'opacity-50 cursor-not-allowed' : ''}`}
-                      dangerouslySetInnerHTML={{ __html: link.label }}
-                    />
-                  ))}
-                </div>
-              )}
+                    </Link>
+                  </Card>
+                ))}
+              </div>
+              
+              
             </div>
           </TabsContent>
           
+          {/* Categories Tab Content */}
           <TabsContent value="categories">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {store.categories.map((category) => (
-                <Link 
-                  key={category.id}
-                  href={`/products?store=${store.id}&category=${category.id}`}
-                  className="block group"
-                >
-                  <div className="border rounded-lg p-6 transition-all hover:border-primary hover:shadow-sm">
-                    <h3 className="font-medium mb-2 group-hover:text-primary">{category.name}</h3>
-                    <p className="text-sm text-muted-foreground">{category.productCount} products</p>
-                  </div>
-                </Link>
+                <Card key={category.id}>
+                  <CardContent className="p-6">
+                    <h3 className="text-lg font-semibold mb-2">{category.name}</h3>
+                    <p className="text-muted-foreground">
+                      {category.productCount} products
+                    </p>
+                  </CardContent>
+                </Card>
               ))}
             </div>
           </TabsContent>
           
+          {/* About Tab Content - Updated with tax number and bio */}
           <TabsContent value="about">
             <div className="max-w-3xl">
               <h2 className="text-xl font-bold mb-4">About {store.name}</h2>
-              <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: store.description }} />
+              
+              {store.bio && (
+                <div className="mb-8">
+                  <h3 className="font-medium mb-2">Store Bio</h3>
+                  <div className="prose max-w-none">
+                    {store.description}
+                  </div>
+                </div>
+              )}
               
               <div className="mt-8 space-y-4">
                 <div className="flex items-start">
@@ -383,6 +347,16 @@ export default function StoreDetail({ store, products }: StoreDetailProps) {
                     <p className="text-muted-foreground">{store.location}</p>
                   </div>
                 </div>
+
+                {store.tax_number && (
+                  <div className="flex items-start">
+                    <Building2 className="h-5 w-5 text-muted-foreground mr-3 mt-0.5" />
+                    <div>
+                      <h3 className="font-medium">Tax Number</h3>
+                      <p className="text-muted-foreground">{store.tax_number}</p>
+                    </div>
+                  </div>
+                )}
                 
                 <div className="flex items-start">
                   <Mail className="h-5 w-5 text-muted-foreground mr-3 mt-0.5" />

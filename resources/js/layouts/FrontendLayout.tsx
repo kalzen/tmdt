@@ -53,7 +53,7 @@ export default function FrontendLayout({ children }: Props) {
           </div>
 
           <div className="mt-8 pt-8 border-t text-center text-sm text-muted-foreground">
-            <p>&copy; {new Date().getFullYear()} TMDT Marketplace. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} 84Gate Marketplace. All rights reserved.</p>
           </div>
         </div>
       </footer>

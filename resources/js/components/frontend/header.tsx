@@ -47,7 +47,7 @@ interface HeaderProps {
   logoPath?: string;
 }
 
-export function Header({ siteTitle = 'TMDT', logoPath }: HeaderProps) {
+export function Header({ siteTitle = '84Gate', logoPath }: HeaderProps) {
   const [searchType, setSearchType] = useState<'products' | 'stores'>('products');
   const [searchKeyword, setSearchKeyword] = useState('');
   

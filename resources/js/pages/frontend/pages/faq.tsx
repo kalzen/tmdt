@@ -35,10 +35,10 @@ const Faq: React.FC<Props> = ({ title, description }) => {
             </CardHeader>
             <CardContent>
               <Accordion type="single" collapsible className="w-full">
-                <AccordionItem value="what-is-tmdt">
-                  <AccordionTrigger>What is TMDT Marketplace?</AccordionTrigger>
+                <AccordionItem value="what-is-84Gate">
+                  <AccordionTrigger>What is 84Gate Marketplace?</AccordionTrigger>
                   <AccordionContent>
-                    TMDT Marketplace is a platform that connects buyers with trusted sellers. 
+                    84Gate Marketplace is a platform that connects buyers with trusted sellers. 
                     We provide a secure environment for online shopping with a wide range of 
                     products and quality assurance measures.
                   </AccordionContent>

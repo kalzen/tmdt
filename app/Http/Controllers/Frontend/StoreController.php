@@ -140,9 +140,13 @@ class StoreController extends Controller
             'phone' => $store->phone ?? 'Not specified',
             'website' => $store->website ?? '#',
             'openingHours' => $store->opening_hours ?? 'Monday - Friday: 9:00 AM - 5:00 PM',
+            'tax_number' => $store->tax_number,
+            'bio' => $store->bio,
             'categories' => $catalogues,
             'featuredProducts' => $featuredProducts,
             'newProducts' => $newProducts,
+            'is_gold' => $store->user->is_gold ?? false,
+            'is_verified' => $store->is_verified,
         ];
 
         return Inertia::render('frontend/store-detail', [
@@ -185,6 +189,8 @@ class StoreController extends Controller
                     'productCount' => $store->products_count,
                     'rating' => $store->rating ?? 4.5,
                     'joinDate' => $store->created_at->format('F Y'),
+                    'is_gold' => $store->user->is_gold ?? false,
+                    'is_verified' => $store->is_verified,
                 ];
             });
 

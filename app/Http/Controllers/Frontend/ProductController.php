@@ -92,8 +92,8 @@ class ProductController extends Controller
             'stock_quantity' => $product->stock_quantity,
             'is_active' => $product->is_active,
             'is_featured' => $product->is_featured,
-            'image' => $product->getFirstMediaUrl('product_images') ?: asset('product-placeholder.jpeg'),
-            'gallery' => $product->getMedia('product_gallery')->map(function($media) {
+            'image' => $product->getFirstMediaUrl('thumbnail') ?: asset('product-placeholder.jpeg'),
+            'gallery' => $product->getMedia('gallery')->map(function($media) {
                 return [
                     'id' => $media->id,
                     'url' => $media->getUrl(),

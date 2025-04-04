@@ -61,8 +61,8 @@ export default function FrontendLayout({ children, title, description }: Fronten
     
     // Format page title
     const pageTitle = title 
-        ? `${title} - ${site?.site_title || 'TMDT Marketplace'}`
-        : site?.site_title || 'TMDT Marketplace';
+        ? `${title} - ${site?.site_title || '84Gate Marketplace'}`
+        : site?.site_title || '84Gate Marketplace';
     
     // Use provided description or fall back to site description
     const metaDescription = description || site?.site_description;

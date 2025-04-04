@@ -6,7 +6,7 @@ import { Link } from '@inertiajs/react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useState } from 'react';
-import { Search, Star } from 'lucide-react';
+import { Search, Star, ShieldCheck, Crown } from 'lucide-react';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 
 interface Store {
@@ -18,6 +18,8 @@ interface Store {
   productCount: number;
   rating: number;
   joinDate: string;
+  is_gold: boolean;
+  is_verified: boolean;
 }
 
 interface StoresProps {
@@ -75,7 +77,7 @@ export default function Stores({ stores, filters }: StoresProps) {
 
   return (
     <FrontendLayout>
-      <Head title="Stores - TMDT Marketplace" />
+      <Head title="Stores - 84Gate Marketplace" />
       
       <div className="container px-4 py-8 mx-auto">
         {/* Breadcrumbs */}
@@ -169,12 +171,27 @@ export default function Stores({ stores, filters }: StoresProps) {
                 </div>
               </div>
               <CardContent className="p-4 pt-10">
-                <Link 
-                  href={`/stores/${store.id}`}
-                  className="font-medium text-lg group-hover:text-primary transition-colors"
-                >
-                  {store.name}
-                </Link>
+                <div className="flex items-center justify-between gap-2">
+                  <Link 
+                    href={`/stores/${store.id}`}
+                    className="font-medium text-lg group-hover:text-primary transition-colors"
+                  >
+                    {store.name}
+                  </Link>
+                  <div className="flex gap-1">
+                    {store.is_gold ? (
+                      <div className="text-yellow-500 bg-yellow-50 px-2 py-1 rounded-full text-xs flex items-center gap-1">
+                        <Crown className="h-3 w-3" />
+                        <span>Gold</span>
+                      </div>
+                    ) : store.is_verified && (
+                      <div className="text-blue-500 bg-blue-50 px-2 py-1 rounded-full text-xs flex items-center gap-1">
+                        <ShieldCheck className="h-3 w-3" />
+                        <span>Verified</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
                 <div className="flex items-center mt-1 mb-2">
                   <div className="flex items-center">
                     {Array.from({ length: 5 }).map((_, i) => (
