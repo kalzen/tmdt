@@ -11,6 +11,46 @@ use Inertia\Inertia;
 class CategoryController extends Controller
 {
     /**
+     * Display all categories.
+     */
+    public function index()
+    {
+        // Get all parent categories with their children
+        $categories = Catalogue::whereNull('parent_id')
+            ->where('is_active', true)
+            ->with(['children' => function ($query) {
+                $query->where('is_active', true)
+                    ->select('id', 'name', 'slug', 'parent_id')
+                    ->orderBy('position');
+            }])
+            ->select('id', 'name', 'slug', 'description')
+            ->orderBy('position')
+            ->get()
+            ->map(function ($category) {
+                return [
+                    'id' => $category->id,
+                    'name' => $category->name,
+                    'slug' => $category->slug,
+                    'description' => $category->description,
+                    'image' => $category->getFirstMediaUrl('thumbnail') ?: asset('category-placeholder.jpeg'),
+                    'children' => $category->children->map(function ($child) {
+                        return [
+                            'id' => $child->id,
+                            'name' => $child->name,
+                            'slug' => $child->slug,
+                        ];
+                    })
+                ];
+            });
+
+        return Inertia::render('Frontend/Pages/Categories', [
+            'title' => 'All Categories',
+            'description' => 'Browse all categories in our marketplace',
+            'categories' => $categories,
+        ]);
+    }
+
+    /**
      * Display products for a specific category.
      *
      * @param  string  $slug
@@ -92,7 +132,7 @@ class CategoryController extends Controller
             'name' => $category->name,
             'slug' => $category->slug,
             'description' => $category->description,
-            'image' => $category->getFirstMediaUrl('image') ?: asset('category-placeholder.jpeg'),
+            'image' => $category->getFirstMediaUrl('category_image') ?: asset('category-placeholder.jpeg'),
             'product_count' => $category->products_count,
             'children' => $childCategories,
         ];

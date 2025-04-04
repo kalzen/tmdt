@@ -51,12 +51,13 @@ Route::namespace('Frontend')->group(function () {
     Route::get('/careers', [App\Http\Controllers\Frontend\PageController::class, 'careers'])->name('frontend.careers');
     Route::get('/privacy', [App\Http\Controllers\Frontend\PageController::class, 'privacy'])->name('frontend.privacy');
     Route::get('/terms', [App\Http\Controllers\Frontend\PageController::class, 'terms'])->name('frontend.terms');
+    
+    // Contact routes
+    Route::get('/contact', [App\Http\Controllers\Frontend\ContactController::class, 'index'])->name('frontend.contact');
+    Route::post('/contact/submit', [App\Http\Controllers\Frontend\ContactController::class, 'submit'])->name('frontend.contact.submit');
 });
 Route::get('/posts/{slug}', [FrontendController::class, 'showPost'])->name('post.show');
 
-// Contact routes
-Route::get('/lien-he', [ContactController::class, 'index'])->name('contact.index');
-Route::post('/lien-he/submit', [ContactController::class, 'submit'])->name('contact.submit');
 
 // Language switch route
 Route::get('/language/{locale}', [LanguageController::class, 'switch'])

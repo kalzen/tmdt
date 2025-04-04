@@ -57,7 +57,7 @@ export function Footer() {
             <h3 className="text-lg font-semibold mb-4">Customer Service</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href={route('contact.index')} className="text-muted-foreground hover:text-primary">
+                <Link href={route('frontend.contact')} className="text-muted-foreground hover:text-primary">
                   Contact Us
                 </Link>
               </li>

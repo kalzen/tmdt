@@ -87,7 +87,7 @@ export function Header({ siteTitle = 'TMDT', logoPath }: HeaderProps) {
                   <Link href={route('frontend.stores.index')} className="text-lg font-semibold">Stores</Link>
                   <Link href={route('frontend.products.index')} className="text-lg font-semibold">Products</Link>
                   <Link href="/posts" className="text-lg font-semibold">Blog</Link>
-                  <Link href={route('contact.index')} className="text-lg font-semibold">Help Center</Link>
+                  <Link href={route('frontend.contact')} className="text-lg font-semibold">Help Center</Link>
                 </nav>
               </SheetContent>
             </Sheet>
@@ -174,7 +174,7 @@ export function Header({ siteTitle = 'TMDT', logoPath }: HeaderProps) {
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                   <NavigationMenuLink asChild>
-                    <Link href={route('contact.index')} className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50">
+                    <Link href={route('frontend.contact')} className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50">
                       Help Center
                     </Link>
                   </NavigationMenuLink>
