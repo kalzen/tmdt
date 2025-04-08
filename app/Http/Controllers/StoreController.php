@@ -135,6 +135,8 @@ class StoreController extends Controller
                 'meta_description' => 'nullable|string',
                 'catalogue_ids' => 'nullable|array',
                 'catalogue_ids.*' => 'exists:catalogues,id',
+                'tax_number' => 'nullable|string|max:50',
+                'bio' => 'nullable|string',
             ]);
             
             // Generate slug if not provided
@@ -162,6 +164,8 @@ class StoreController extends Controller
                 'email' => $validated['email'] ?? null,
                 'meta_title' => $validated['meta_title'] ?? null,
                 'meta_description' => $validated['meta_description'] ?? null,
+                'tax_number' => $validated['tax_number'] ?? null,
+                'bio' => $validated['bio'] ?? null,
             ]);
             
             // Attach catalogues
@@ -295,6 +299,8 @@ class StoreController extends Controller
                 'meta_description' => 'nullable|string',
                 'catalogue_ids' => 'nullable|array',
                 'catalogue_ids.*' => 'exists:catalogues,id',
+                'tax_number' => 'nullable|string|max:50',
+                'bio' => 'nullable|string',
             ]);
             
             // Generate slug if not provided
@@ -322,6 +328,8 @@ class StoreController extends Controller
                 'email' => $validated['email'] ?? null,
                 'meta_title' => $validated['meta_title'] ?? null,
                 'meta_description' => $validated['meta_description'] ?? null,
+                'tax_number' => $validated['tax_number'] ?? null,
+                'bio' => $validated['bio'] ?? null,
             ]);
             
             // Sync catalogues

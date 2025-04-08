@@ -53,6 +53,8 @@ export default function CreateStore({ users, catalogues }: Props) {
         logo: null as File | null,
         banner: null as File | null,
         catalogue_ids: [] as number[],
+        tax_number: '',
+        bio: '',
     });
 
     const [selectedCatalogues, setSelectedCatalogues] = useState<number[]>([]);
@@ -136,6 +138,17 @@ export default function CreateStore({ users, catalogues }: Props) {
                                     </div>
                                     
                                     <div className="grid gap-2">
+                                        <Label htmlFor="tax_number">{__('admin.tax_number', 'Tax Number')}</Label>
+                                        <Input
+                                            id="tax_number"
+                                            value={data.tax_number}
+                                            onChange={(e) => setData('tax_number', e.target.value)}
+                                            placeholder={__('admin.tax_number_placeholder', 'Enter store tax number')}
+                                        />
+                                        <InputError message={errors.tax_number} />
+                                    </div>
+                                    
+                                    <div className="grid gap-2">
                                         <Label htmlFor="slug">{__('admin.slug', 'Slug')}</Label>
                                         <Input
                                             id="slug"
@@ -159,6 +172,18 @@ export default function CreateStore({ users, catalogues }: Props) {
                                             rows={4}
                                         />
                                         <InputError message={errors.description} />
+                                    </div>
+                                    
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="bio">{__('admin.bio', 'Bio')}</Label>
+                                        <Textarea
+                                            id="bio"
+                                            value={data.bio}
+                                            onChange={(e) => setData('bio', e.target.value)}
+                                            placeholder={__('admin.bio_placeholder', 'Enter store owner bio or additional information')}
+                                            rows={3}
+                                        />
+                                        <InputError message={errors.bio} />
                                     </div>
                                     
                                     <div className="grid gap-2">
@@ -197,23 +222,7 @@ export default function CreateStore({ users, catalogues }: Props) {
                                         <InputError message={errors.user_id} />
                                     </div>
                                     
-                                    <div className="flex items-center space-x-2">
-                                        <Switch 
-                                            id="is_active" 
-                                            checked={data.is_active} 
-                                            onCheckedChange={(checked) => setData('is_active', checked)}
-                                        />
-                                        <Label htmlFor="is_active">{__('admin.is_active', 'Active')}</Label>
-                                    </div>
-                                    
-                                    <div className="flex items-center space-x-2">
-                                        <Switch 
-                                            id="is_featured" 
-                                            checked={data.is_featured} 
-                                            onCheckedChange={(checked) => setData('is_featured', checked)}
-                                        />
-                                        <Label htmlFor="is_featured">{__('admin.is_featured', 'Featured Store')}</Label>
-                                    </div>
+                                   
                                 </CardContent>
                             </Card>
                         </TabsContent>

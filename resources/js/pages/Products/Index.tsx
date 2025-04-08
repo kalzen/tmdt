@@ -203,7 +203,7 @@ export default function ProductIndex({ products, catalogues, filters }: Props) {
                                 <DropdownMenuTrigger asChild>
                                     <Button variant="outline" className="min-w-[180px] justify-between">
                                         {catalogueId 
-                                            ? formattedCatalogues.find(c => c.id.toString() === catalogueId)?.name 
+                                            ? formattedCatalogues.find(c => c.id.toString() === catalogueId)?.name || __('admin.unknown_catalogue', 'Unknown catalogue')
                                             : __('admin.all_catalogues', 'All catalogues')}
                                         <svg className="h-4 w-4 opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                             <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
@@ -318,7 +318,7 @@ export default function ProductIndex({ products, catalogues, filters }: Props) {
                                             </div>
                                         </TableCell>
                                         <TableCell>
-                                            {product.catalogue.name}
+                                            {product.catalogue?.name || __('admin.uncategorized', 'Uncategorized')}
                                             {product.catalogue_count > 1 && (
                                                 <Badge variant="outline" className="ml-1">
                                                     +{product.catalogue_count - 1}
