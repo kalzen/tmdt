@@ -21,7 +21,6 @@ class HomeController extends Controller
     {
         // Get featured products
         $featuredProducts = Product::with('store')
-            ->where('is_featured', true)
             ->where('is_active', true)
             ->take(10)
             ->get()
