@@ -56,7 +56,7 @@ Route::namespace('Frontend')->group(function () {
     Route::get('/contact', [App\Http\Controllers\Frontend\ContactController::class, 'index'])->name('frontend.contact');
     Route::post('/contact/submit', [App\Http\Controllers\Frontend\ContactController::class, 'submit'])->name('frontend.contact.submit');
 });
-Route::get('/posts/{slug}', [FrontendController::class, 'showPost'])->name('post.show');
+Route::get('/article/{slug}', [FrontendController::class, 'showPost'])->name('article.show');
 
 
 // Language switch route
@@ -124,5 +124,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('slider-items/reorder', [SliderItemController::class, 'reorder'])->name('slider-items.reorder');
 });
 
+Route::resource('posts', PostController::class)->middleware(['auth', 'verified']);
+Route::resource('categories', CategoryController::class)->middleware(['auth', 'verified']);
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
