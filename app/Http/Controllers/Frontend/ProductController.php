@@ -139,33 +139,62 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Product::with(['store'])
+        $query = Product::with(['store', 'catalogues'])
             ->where('is_active', true);
 
         // Apply filters
-        if ($request->has('catalogue')) {
-            $query->where('catalogue_id', $request->catalogue);
+        if ($request->has('catalogue') && !empty($request->catalogue)) {
+            $query->whereHas('catalogues', function($q) use ($request) {
+                $q->where('catalogues.id', $request->catalogue);
+            });
         }
 
-        if ($request->has('store')) {
+        if ($request->has('store') && !empty($request->store)) {
             $query->where('store_id', $request->store);
         }
 
-        if ($request->has('min_price')) {
+        // Filter by price range
+        if ($request->has('min_price') && is_numeric($request->min_price)) {
             $query->where('price', '>=', $request->min_price);
         }
 
-        if ($request->has('max_price')) {
+        if ($request->has('max_price') && is_numeric($request->max_price)) {
             $query->where('price', '<=', $request->max_price);
         }
 
-        if ($request->has('search')) {
-            $query->where('title', 'like', '%' . $request->search . '%');
+        // Filter by search term
+        if ($request->has('search') && !empty($request->search)) {
+            $query->where(function($q) use ($request) {
+                $q->where('title', 'like', '%' . $request->search . '%')
+                  ->orWhere('description', 'like', '%' . $request->search . '%')
+                  ->orWhere('sku', 'like', '%' . $request->search . '%');
+            });
+        }
+        
+        // Filter by stock availability
+        if ($request->has('in_stock') && $request->in_stock == '1') {
+            $query->where('stock_quantity', '>', 0);
+        }
+        
+        if ($request->has('out_of_stock') && $request->out_of_stock == '1') {
+            $query->where('stock_quantity', '<=', 0);
         }
 
         // Apply sorting
         $sortField = $request->input('sort_by', 'created_at');
         $sortDirection = $request->input('sort_direction', 'desc');
+        
+        // Validate sort field to prevent SQL injection
+        $allowedSortFields = ['created_at', 'price', 'title'];
+        if (!in_array($sortField, $allowedSortFields)) {
+            $sortField = 'created_at';
+        }
+        
+        // Map frontend sort field names to database column names
+        if ($sortField === 'name') {
+            $sortField = 'title';
+        }
+        
         $query->orderBy($sortField, $sortDirection);
 
         // Paginate results with consistent format
@@ -181,18 +210,19 @@ class ProductController extends Controller
                     'slug' => $product->slug,
                     'price' => $product->price,
                     'sale_price' => $product->sale_price,
+                    'stock_quantity' => $product->stock_quantity,
                     'discount_percentage' => $product->sale_price 
                         ? round(($product->price - $product->sale_price) / $product->price * 100) 
                         : 0,
                     'image' => $product->getFirstMediaUrl('thumbnail') ?: asset('product-placeholder.jpeg'),
-                    'store' => [
+                    'store' => $product->store ? [
                         'id' => $product->store->id,
                         'name' => $product->store->name,
                         'slug' => $product->store->slug,
-                    ],
-                    'category' => $product->catalogue ? [
-                        'id' => $product->catalogue->id,
-                        'name' => $product->catalogue->name,
+                    ] : null,
+                    'category' => $product->catalogues->isNotEmpty() ? [
+                        'id' => $product->catalogues->first()->id,
+                        'name' => $product->catalogues->first()->name,
                     ] : null,
                 ];
             })->toArray(),
@@ -208,7 +238,11 @@ class ProductController extends Controller
 
         return Inertia::render('frontend/products', [
             'products' => $formattedData,
-            'filters' => $request->only(['catalogue', 'store', 'min_price', 'max_price', 'search', 'sort_by', 'sort_direction', 'per_page']),
+            'filters' => $request->only([
+                'catalogue', 'store', 'min_price', 'max_price', 
+                'search', 'sort_by', 'sort_direction', 'per_page',
+                'in_stock', 'out_of_stock'
+            ]),
         ]);
     }
 }
