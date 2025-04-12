@@ -139,12 +139,12 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Product::with(['store', 'category'])
+        $query = Product::with(['store'])
             ->where('is_active', true);
 
         // Apply filters
-        if ($request->has('category')) {
-            $query->where('category_id', $request->category);
+        if ($request->has('catalogue')) {
+            $query->where('catalogue_id', $request->catalogue);
         }
 
         if ($request->has('store')) {
@@ -181,8 +181,8 @@ class ProductController extends Controller
                         'name' => $product->store->name,
                     ],
                     'category' => [
-                        'id' => $product->category->id,
-                        'name' => $product->category->name,
+                        'id' => $product->catalogue->id,
+                        'name' => $product->catalogue->name,
                     ],
                 ];
             });
