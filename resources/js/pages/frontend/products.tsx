@@ -15,6 +15,12 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbS
 import { Separator } from '@/components/ui/separator';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
+interface Catalogue {
+  id: number;
+  name: string;
+  slug: string;
+}
+
 interface Product {
   id: number;
   name: string;
@@ -54,6 +60,7 @@ interface ProductsProps {
   };
   filters: {
     catalogue?: string;
+    selectedCatalogueName?: string;
     store?: string;
     min_price?: number;
     max_price?: number;
@@ -64,9 +71,10 @@ interface ProductsProps {
     in_stock?: string;
     out_of_stock?: string;
   };
+  parentCatalogues: Catalogue[];
 }
 
-export default function Products({ products, filters }: ProductsProps) {
+export default function Products({ products, filters, parentCatalogues }: ProductsProps) {
   const [isFilterOpenOnMobile, setIsFilterOpenOnMobile] = useState(false);
   const [searchTerm, setSearchTerm] = useState(filters.search || '');
   const [priceRange, setPriceRange] = useState<[number, number]>([
@@ -78,8 +86,8 @@ export default function Products({ products, filters }: ProductsProps) {
   const [perPage, setPerPage] = useState(filters.per_page?.toString() || '20');
   const [isLoading, setIsLoading] = useState(false);
 
-  const [selectedCategories, setSelectedCategories] = useState<number[]>(
-    filters.catalogue ? [parseInt(filters.catalogue.toString())] : []
+  const [selectedCatalogue, setSelectedCatalogue] = useState<string>(
+    filters.catalogue?.toString() || ''
   );
 
   const [availability, setAvailability] = useState({
@@ -107,8 +115,8 @@ export default function Products({ products, filters }: ProductsProps) {
     filterParams.sort_direction = sortDirection;
     filterParams.per_page = perPage;
 
-    if (selectedCategories.length === 1) {
-      filterParams.catalogue = selectedCategories[0].toString();
+    if (selectedCatalogue) {
+      filterParams.catalogue = selectedCatalogue;
     }
 
     if (availability.inStock && !availability.outOfStock) {
@@ -137,7 +145,7 @@ export default function Products({ products, filters }: ProductsProps) {
     setSortBy('created_at');
     setSortDirection('desc');
     setPerPage('20');
-    setSelectedCategories([]);
+    setSelectedCatalogue('');
     setAvailability({ inStock: false, outOfStock: false });
 
     router.get('/product', {}, {
@@ -151,12 +159,8 @@ export default function Products({ products, filters }: ProductsProps) {
     });
   };
 
-  const handleCategoryChange = (categoryId: number, checked: boolean) => {
-    if (checked) {
-      setSelectedCategories([categoryId]);
-    } else {
-      setSelectedCategories([]);
-    }
+  const handleCatalogueChange = (catalogueId: string) => {
+    setSelectedCatalogue(catalogueId === selectedCatalogue ? '' : catalogueId);
   };
 
   return (
@@ -338,12 +342,12 @@ export default function Products({ products, filters }: ProductsProps) {
                   </div>
                 )}
 
-                {filters.catalogue && (
+                {filters.catalogue && filters.selectedCatalogueName && (
                   <div className="bg-muted rounded-full px-3 py-1 text-sm flex items-center">
-                    <span className="mr-1">Category: {filters.catalogue}</span>
+                    <span className="mr-1">Category: {filters.selectedCatalogueName}</span>
                     <button
                       onClick={() => {
-                        setSelectedCategories([]);
+                        setSelectedCatalogue('');
                         const newFilters = { ...filters, catalogue: undefined };
                         applyFiltersWithNewValues(newFilters);
                       }}
@@ -554,43 +558,28 @@ export default function Products({ products, filters }: ProductsProps) {
 
         <Separator />
 
-        <Accordion type="multiple" className="w-full">
+        <Accordion type="multiple" className="w-full" defaultValue={["categories"]}>
           <AccordionItem value="categories" className="border-none">
             <AccordionTrigger className="py-1">
               <span className="text-sm font-medium">Categories</span>
             </AccordionTrigger>
             <AccordionContent>
               <div className="pl-2 space-y-2">
-                <div className="flex items-center gap-2">
-                  <Checkbox
-                    id="category-electronics"
-                    checked={selectedCategories.includes(1)}
-                    onCheckedChange={(checked) => handleCategoryChange(1, !!checked)}
-                  />
-                  <Label htmlFor="category-electronics" className="text-sm">
-                    Electronics
-                  </Label>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Checkbox
-                    id="category-clothing"
-                    checked={selectedCategories.includes(2)}
-                    onCheckedChange={(checked) => handleCategoryChange(2, !!checked)}
-                  />
-                  <Label htmlFor="category-clothing" className="text-sm">
-                    Clothing
-                  </Label>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Checkbox
-                    id="category-home"
-                    checked={selectedCategories.includes(3)}
-                    onCheckedChange={(checked) => handleCategoryChange(3, !!checked)}
-                  />
-                  <Label htmlFor="category-home" className="text-sm">
-                    Home & Garden
-                  </Label>
-                </div>
+                {parentCatalogues.map((catalogue) => (
+                  <div key={catalogue.id} className="flex items-center gap-2">
+                    <Checkbox
+                      id={`category-${catalogue.id}`}
+                      checked={selectedCatalogue === catalogue.id.toString()}
+                      onCheckedChange={(checked) => handleCatalogueChange(catalogue.id.toString())}
+                    />
+                    <Label htmlFor={`category-${catalogue.id}`} className="text-sm">
+                      {catalogue.name}
+                    </Label>
+                  </div>
+                ))}
+                {parentCatalogues.length === 0 && (
+                  <div className="text-sm text-muted-foreground">No categories found</div>
+                )}
               </div>
             </AccordionContent>
           </AccordionItem>

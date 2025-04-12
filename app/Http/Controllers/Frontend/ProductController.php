@@ -236,13 +236,31 @@ class ProductController extends Controller
             ],
         ];
 
+        // Get all parent catalogues for filter dropdown
+        $parentCatalogues = \App\Models\Catalogue::whereNull('parent_id')
+            ->where('is_active', true)
+            ->select('id', 'name', 'slug')
+            ->get();
+
+        // Get the current selected catalogue name if one is selected
+        $selectedCatalogueName = null;
+        if ($request->has('catalogue') && !empty($request->catalogue)) {
+            $selectedCatalogue = \App\Models\Catalogue::find($request->catalogue);
+            if ($selectedCatalogue) {
+                $selectedCatalogueName = $selectedCatalogue->name;
+            }
+        }
+
         return Inertia::render('frontend/products', [
             'products' => $formattedData,
-            'filters' => $request->only([
+            'filters' => array_merge($request->only([
                 'catalogue', 'store', 'min_price', 'max_price', 
                 'search', 'sort_by', 'sort_direction', 'per_page',
                 'in_stock', 'out_of_stock'
+            ]), [
+                'selectedCatalogueName' => $selectedCatalogueName
             ]),
+            'parentCatalogues' => $parentCatalogues
         ]);
     }
 }
