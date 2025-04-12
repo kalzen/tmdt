@@ -1,4 +1,4 @@
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { __ } from '@/utils/translate';
 import AppLayout from '@/layouts/app-layout';
@@ -50,9 +50,10 @@ interface Props {
     catalogues: Catalogue[];
     stores: Store[];
     attributes: Attribute[];
+    defaultStoreId: number | null; // Add this prop to receive the default store
 }
 
-export default function CreateProduct({ catalogues, stores, attributes }: Props) {
+export default function CreateProduct({ catalogues, stores, attributes, defaultStoreId }: Props) {
     const { data, setData, post, processing, errors, reset } = useForm({
         title: '',
         sku: '',
@@ -62,8 +63,8 @@ export default function CreateProduct({ catalogues, stores, attributes }: Props)
         sale_price: '',
         stock_quantity: '0',
         catalogue_id: '',
-        catalogue_ids: [] as string[],  // Add this line for multiple catalogues
-        store_id: '',
+        catalogue_ids: [] as string[],
+        store_id: defaultStoreId ? defaultStoreId.toString() : '', // Set the default store from props
         is_active: true,
         is_featured: false,
         meta_title: '',
@@ -258,9 +259,11 @@ export default function CreateProduct({ catalogues, stores, attributes }: Props)
                                                     </Button>
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent align="center" className="w-[300px]">
-                                                    <DropdownMenuItem onClick={() => setData('store_id', '')}>
-                                                        {__('admin.none', 'None')}
-                                                    </DropdownMenuItem>
+                                                    {stores.length > 1 && (
+                                                        <DropdownMenuItem onClick={() => setData('store_id', '')}>
+                                                            {__('admin.none', 'None')}
+                                                        </DropdownMenuItem>
+                                                    )}
                                                     {stores.map((store) => (
                                                         <DropdownMenuItem 
                                                             key={store.id} 

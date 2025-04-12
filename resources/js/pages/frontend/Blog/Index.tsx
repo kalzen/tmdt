@@ -45,8 +45,13 @@ export default function BlogIndex({ posts, categories, latestPosts }: Props) {
       <Head title="Blog" />
 
       {/* Hero Banner */}
-      <div className="relative bg-gradient-to-r from-primary/90 to-primary h-[300px] w-full flex items-center">
-        <div className="absolute inset-0 bg-black/50" />
+      <div className="relative h-[400px] w-full flex items-center">
+        <img
+          src="https://images.unsplash.com/photo-1565793298595-6a879b1d9492?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          alt="Blog Hero"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-black/70" />
         <div className="container mx-auto px-4 relative text-white text-center">
           <nav className="mb-4 flex justify-center" aria-label="Breadcrumb">
             <ol className="inline-flex items-center space-x-1 md:space-x-3">

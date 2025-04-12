@@ -8,6 +8,7 @@ use App\Models\Catalogue;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
@@ -24,6 +25,11 @@ class StoreController extends Controller
         $query = Store::query()
             ->with('user:id,name,email')
             ->withCount('products');
+        
+        // If user is not admin, limit to viewing only their own store
+        if (!Auth::user()->is_admin) {
+            $query->where('user_id', Auth::id());
+        }
             
         // Search by name, description
         if ($request->filled('search')) {
@@ -82,6 +88,11 @@ class StoreController extends Controller
      */
     public function create()
     {
+        // Only admin users can create new stores
+        if (!Auth::user()->is_admin) {
+            return Inertia::render('errors/not-found');
+        }
+        
         // Get users who don't have a store yet
         $users = User::doesntHave('store')
             ->where('is_admin', false)
@@ -114,6 +125,11 @@ class StoreController extends Controller
      */
     public function store(Request $request)
     {
+        // Only admin users can create new stores
+        if (!Auth::user()->is_admin) {
+            return Inertia::render('errors/not-found');
+        }
+        
         try {
             $validated = $request->validate([
                 'name' => 'required|string|max:255|unique:stores,name',
@@ -211,6 +227,11 @@ class StoreController extends Controller
      */
     public function show(Store $store)
     {
+        // Check if user can view this store
+        if (!Auth::user()->is_admin && $store->user_id !== Auth::id()) {
+            return Inertia::render('errors/not-found');
+        }
+        
         $store->load(['user:id,name,email', 'catalogues:id,name']);
         
         // Get media URLs
@@ -231,16 +252,24 @@ class StoreController extends Controller
      */
     public function edit(Store $store)
     {
-        // Get all users for dropdown
-        $users = User::where('is_admin', false)
-            ->where(function ($query) use ($store) {
-                $query->doesntHave('store')
-                    ->orWhere('id', $store->user_id);
-            })
-            ->select('id', 'name', 'email')
-            ->orderBy('name')
-            ->get();
-            
+        // Check if user can edit this store
+        if (!Auth::user()->is_admin && $store->user_id !== Auth::id()) {
+            return Inertia::render('errors/not-found');
+        }
+        
+        // Get users for dropdown (only for admin)
+        $users = [];
+        if (Auth::user()->is_admin) {
+            $users = User::where('is_admin', false)
+                ->where(function ($query) use ($store) {
+                    $query->doesntHave('store')
+                        ->orWhere('id', $store->user_id);
+                })
+                ->select('id', 'name', 'email')
+                ->orderBy('name')
+                ->get();
+        }
+        
         // Get all categories for multiselect
         $catalogues = Catalogue::select('id', 'name', 'parent_id', 'level')
             ->orderBy('level', 'asc')
@@ -278,14 +307,17 @@ class StoreController extends Controller
      */
     public function update(Request $request, Store $store)
     {
+        // Check if user can update this store
+        if (!Auth::user()->is_admin && $store->user_id !== Auth::id()) {
+            return Inertia::render('errors/not-found');
+        }
+        
         try {
-            $validated = $request->validate([
+            $validationRules = [
                 'name' => 'required|string|max:255|unique:stores,name,' . $store->id,
                 'slug' => 'nullable|string|max:255|unique:stores,slug,' . $store->id,
                 'description' => 'nullable|string',
-                'user_id' => 'required|exists:users,id',
                 'is_active' => 'boolean',
-                'is_featured' => 'boolean',
                 'address' => 'nullable|string|max:255',
                 'city' => 'nullable|string|max:100',
                 'state' => 'nullable|string|max:100',
@@ -301,7 +333,15 @@ class StoreController extends Controller
                 'catalogue_ids.*' => 'exists:catalogues,id',
                 'tax_number' => 'nullable|string|max:50',
                 'bio' => 'nullable|string',
-            ]);
+            ];
+            
+            // Only admin can change the store owner or featured status
+            if (Auth::user()->is_admin) {
+                $validationRules['user_id'] = 'required|exists:users,id';
+                $validationRules['is_featured'] = 'boolean';
+            }
+            
+            $validated = $request->validate($validationRules);
             
             // Generate slug if not provided
             if (empty($validated['slug'])) {
@@ -311,14 +351,12 @@ class StoreController extends Controller
             // Start transaction
             DB::beginTransaction();
             
-            // Update the store
-            $store->update([
+            // Prepare update data
+            $updateData = [
                 'name' => $validated['name'],
                 'slug' => $validated['slug'],
                 'description' => $validated['description'] ?? null,
-                'user_id' => $validated['user_id'],
                 'is_active' => $validated['is_active'] ?? $store->is_active,
-                'is_featured' => $validated['is_featured'] ?? $store->is_featured,
                 'address' => $validated['address'] ?? null,
                 'city' => $validated['city'] ?? null,
                 'state' => $validated['state'] ?? null,
@@ -330,7 +368,16 @@ class StoreController extends Controller
                 'meta_description' => $validated['meta_description'] ?? null,
                 'tax_number' => $validated['tax_number'] ?? null,
                 'bio' => $validated['bio'] ?? null,
-            ]);
+            ];
+            
+            // Only admin can update these fields
+            if (Auth::user()->is_admin) {
+                $updateData['user_id'] = $validated['user_id'];
+                $updateData['is_featured'] = $validated['is_featured'] ?? $store->is_featured;
+            }
+            
+            // Update the store
+            $store->update($updateData);
             
             // Sync catalogues
             if (isset($validated['catalogue_ids'])) {
@@ -377,6 +424,11 @@ class StoreController extends Controller
      */
     public function destroy(Store $store)
     {
+        // Only admin users can delete stores
+        if (!Auth::user()->is_admin) {
+            return Inertia::render('errors/not-found');
+        }
+        
         try {
             // Check if store has products
             $productsCount = $store->products()->count();

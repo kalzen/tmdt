@@ -39,11 +39,16 @@ export default function BlogShow({ post, relatedPosts, popularPosts }: Props) {
       {/* Hero Section */}
       <div className="relative h-[400px]">
         <img
+          src="https://images.unsplash.com/photo-1565793298595-6a879b1d9492?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          alt="Blog Hero"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <img
           src={post.featured_image_url}
           alt={post.title}
-          className="w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-contain p-12 z-10"
         />
-        <div className="absolute inset-0 bg-black/60" />
+        <div className="absolute inset-0 bg-black/70" />
         <div className="absolute inset-0 flex items-center">
           <div className="container mx-auto px-4 text-white text-center">
             <nav className="mb-4 flex justify-center" aria-label="Breadcrumb">

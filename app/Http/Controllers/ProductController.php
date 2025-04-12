@@ -29,6 +29,18 @@ class ProductController extends Controller
             ->withCount('catalogues')
             ->withCount('media');
         
+        // If user is not admin, limit to viewing only products from their own store
+        if (!Auth::user()->is_admin) {
+            // Get the user's store
+            $userStore = Auth::user()->store;
+            if ($userStore) {
+                $query->where('store_id', $userStore->id);
+            } else {
+                // If user has no store, show no products
+                $query->where('id', 0);
+            }
+        }
+        
         // Tìm kiếm theo tên, mã sản phẩm
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
@@ -104,13 +116,15 @@ class ProductController extends Controller
         // Nếu người dùng có gian hàng, lấy danh sách gian hàng của họ
         $user = Auth::user();
         $stores = [];
+        $defaultStoreId = null;
         
         if ($user->is_admin) {
             // Nếu là admin, hiển thị tất cả các gian hàng
             $stores = Store::select('id', 'name')->orderBy('name')->get();
         } elseif ($user->store) {
-            // Nếu là chủ gian hàng, chỉ hiển thị gian hàng của họ
+            // Nếu là chủ gian hàng, chỉ hiển thị gian hàng của họ và đặt làm mặc định
             $stores = [$user->store];
+            $defaultStoreId = $user->store->id;
         }
         
         // Lấy danh sách thuộc tính
@@ -123,6 +137,7 @@ class ProductController extends Controller
             'catalogues' => $catalogues,
             'stores' => $stores,
             'attributes' => $attributes,
+            'defaultStoreId' => $defaultStoreId,
         ]);
     }
 
@@ -162,10 +177,32 @@ class ProductController extends Controller
                 $slug = $slug . '-' . time();
             }
             
-            // Xác định store_id
-            $store_id = $request->store_id;
-            if (!$store_id && !Auth::user()->is_admin) {
+            // Xác định store_id - với server-side validation
+            if (Auth::user()->is_admin) {
+                // Admin can choose any store
+                $store_id = $request->store_id;
+                if (!$store_id) {
+                    return back()->withInput()->with([
+                        'toast' => true,
+                        'toast.type' => 'error',
+                        'toast.message' => 'Please select a store for this product'
+                    ]);
+                }
+            } else {
+                // Non-admin users can only use their own store
                 $store_id = Auth::user()->store?->id;
+                if (!$store_id) {
+                    return back()->withInput()->with([
+                        'toast' => true,
+                        'toast.type' => 'error',
+                        'toast.message' => 'You need to have a store to create products'
+                    ]);
+                }
+                
+                // If store_id was passed in request but doesn't match the user's store, reject it
+                if ($request->store_id && $request->store_id != $store_id) {
+                    return Inertia::render('errors/not-found');
+                }
             }
             
             // Ensure we have catalogue_ids array, at minimum containing the primary catalogue_id
@@ -243,6 +280,14 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
+        // Check if user can view this product
+        if (!Auth::user()->is_admin) {
+            $userStore = Auth::user()->store;
+            if (!$userStore || $product->store_id !== $userStore->id) {
+                return Inertia::render('errors/not-found');
+            }
+        }
+
         $product->load(['catalogue', 'user', 'store', 'attributes.attribute', 'catalogues']);
         
         // Lấy media
@@ -265,6 +310,14 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
+        // Check if user can edit this product
+        if (!Auth::user()->is_admin) {
+            $userStore = Auth::user()->store;
+            if (!$userStore || $product->store_id !== $userStore->id) {
+                return Inertia::render('errors/not-found');
+            }
+        }
+
         // Danh sách danh mục cho dropdown
         $catalogues = Catalogue::select('id', 'name', 'parent_id', 'level')
             ->orderBy('level', 'asc')
@@ -357,10 +410,26 @@ class ProductController extends Controller
         ]);
 
         try {
-            // Xác định store_id
-            $store_id = $request->store_id;
-            if (!$store_id && !Auth::user()->is_admin) {
-                $store_id = Auth::user()->store?->id;
+            // Xác định store_id with security check
+            if (Auth::user()->is_admin) {
+                // Admin can choose any store or keep the current one
+                $store_id = $request->store_id ?? $product->store_id;
+            } else {
+                // Non-admin users can only use their own store
+                $userStoreId = Auth::user()->store?->id;
+                
+                // If the product doesn't belong to the user's store or user has no store, reject it
+                if (!$userStoreId || $product->store_id !== $userStoreId) {
+                    return Inertia::render('errors/not-found');
+                }
+                
+                // If store_id was passed in request but doesn't match the user's store, reject it
+                if ($request->has('store_id') && $request->store_id != $userStoreId) {
+                    return Inertia::render('errors/not-found');
+                }
+                
+                // Always use the user's store id
+                $store_id = $userStoreId;
             }
             
             // Ensure we have catalogue_ids array, at minimum containing the primary catalogue_id

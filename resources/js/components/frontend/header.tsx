@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { AuthModal } from '@/components/frontend/auth-modal';
 import { Link, usePage } from '@inertiajs/react';
-import { User, Search, ChevronDown } from 'lucide-react';
+import { UserCircle2, Search, ChevronDown, LogIn, Bell, Settings, LayoutDashboard, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { __ } from '@/utils/translate';
@@ -15,6 +16,18 @@ import {
 } from "@/components/ui/navigation-menu";
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { type SharedData } from '@/types';
 
 const ListItem = React.forwardRef<
   React.ElementRef<"a">,
@@ -50,6 +63,15 @@ interface HeaderProps {
 export function Header({ siteTitle = '84Gate', logoPath }: HeaderProps) {
   const [searchType, setSearchType] = useState<'products' | 'stores'>('products');
   const [searchKeyword, setSearchKeyword] = useState('');
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [defaultTab, setDefaultTab] = useState<'login' | 'signup'>('login');
+  const { auth } = usePage<SharedData>().props;
+
+  const handleAuthModal = (tab: 'login' | 'signup' = 'login') => (e: React.MouseEvent) => {
+    e.preventDefault();
+    setDefaultTab(tab);
+    setIsAuthModalOpen(true);
+  };
   
   // Get the current URL to check for keyword parameter
   useEffect(() => {
@@ -64,6 +86,16 @@ export function Header({ siteTitle = '84Gate', logoPath }: HeaderProps) {
       setSearchType(typeParam);
     }
   }, []);
+
+  // Function to get the user initials for avatar fallback
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(word => word[0])
+      .join('')
+      .toUpperCase()
+      .substring(0, 2);
+  };
 
   return (
     <header className="w-full border-b place-items-center bg-background">
@@ -183,24 +215,92 @@ export function Header({ siteTitle = '84Gate', logoPath }: HeaderProps) {
             </NavigationMenu>
           </div>
 
-          {/* Right side: Auth Buttons */}
+          {/* Right side: Auth buttons or User dropdown */}
           <div className="flex items-center gap-2">
-            <Link href="/login">
-              <Button variant="ghost" size="sm" className="hidden md:flex">
-                Login
-              </Button>
-            </Link>
-            <Link href="/register">
-              <Button variant="default" size="sm" className="hidden md:flex rounded-full">
-                Sign Up
-              </Button>
-            </Link>
-            
-            {/* Mobile auth icon */}
-            <Button variant="ghost" size="icon" className="md:hidden">
-              <User className="h-5 w-5" />
-              <span className="sr-only">Account</span>
-            </Button>
+            {auth.user ? (
+              <>
+                {/* User dropdown for authenticated users */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="gap-2 flex items-center">
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src={auth.user.avatar_url} alt={auth.user.name} />
+                        <AvatarFallback>{getInitials(auth.user.name)}</AvatarFallback>
+                      </Avatar>
+                      <span className="hidden md:inline-flex font-medium">{auth.user.name}</span>
+                      <ChevronDown className="h-4 w-4 opacity-50" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuGroup>
+                      <DropdownMenuItem>
+                        <Link href={route('dashboard')} className="flex items-center w-full">
+                          <LayoutDashboard className="mr-2 h-4 w-4" />
+                          <span>Dashboard</span>
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <Link href={route('profile.edit')} className="flex items-center w-full">
+                          <Settings className="mr-2 h-4 w-4" />
+                          <span>Settings</span>
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <div className="flex items-center w-full">
+                          <Bell className="mr-2 h-4 w-4" />
+                          <span>Notifications</span>
+                          <Badge className="ml-2 bg-primary text-white" variant="outline">3</Badge>
+                        </div>
+                      </DropdownMenuItem>
+                    </DropdownMenuGroup>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem>
+                      <Link href={route('logout')} method="post" as="button" className="flex items-center w-full">
+                        <LogOut className="mr-2 h-4 w-4" />
+                        <span>Log out</span>
+                      </Link>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
+            ) : (
+              <>
+                {/* Desktop buttons for guests */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="hidden md:inline-flex gap-2"
+                  onClick={handleAuthModal('login')}
+                >
+                  <LogIn className="h-4 w-4" />
+                  <span>Login</span>
+                </Button>
+                <Button
+                  variant="default"
+                  size="sm"
+                  className="hidden md:inline-flex gap-2 rounded-full"
+                  onClick={handleAuthModal('signup')}
+                >
+                  <UserCircle2 className="h-4 w-4" />
+                  <span>Sign Up</span>
+                </Button>
+                
+                {/* Mobile auth icon */}
+                <Button variant="ghost" size="icon" className="md:hidden" onClick={handleAuthModal('login')}>
+                  <UserCircle2 className="h-5 w-5" />
+                  <span className="sr-only">Account</span>
+                </Button>
+                
+                {/* Auth Modal */}
+                <AuthModal
+                  isOpen={isAuthModalOpen}
+                  onClose={() => setIsAuthModalOpen(false)}
+                  defaultTab={defaultTab}
+                />
+              </>
+            )}
           </div>
         </div>
         

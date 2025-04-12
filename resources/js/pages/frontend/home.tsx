@@ -341,8 +341,14 @@ export default function Home({ featuredProducts, popularStores, categories, slid
       </section>
       
       {/* Call to Action */}
-      <section className="py-16 bg-primary text-primary-foreground w-full">
-        <div className="container px-4 mx-auto text-center">
+      <section className="py-16 w-full relative">
+        <img
+          src="https://images.unsplash.com/photo-1717386255773-1e3037c81788?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          alt="Start Selling"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-black/70" />
+        <div className="container px-4 mx-auto text-center relative text-white">
           <h2 className="text-3xl font-bold mb-4">Start Selling on 84Gate Marketplace</h2>
           <p className="max-w-2xl mx-auto mb-8">
             Join thousands of successful sellers on our platform. Reach millions of customers and grow your business.

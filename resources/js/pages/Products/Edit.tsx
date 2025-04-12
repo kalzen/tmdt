@@ -1,5 +1,5 @@
 import { useState, FormEvent, useEffect } from 'react';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { __ } from '@/utils/translate';
 import AppLayout from '@/layouts/app-layout';
 import { Button } from '@/components/ui/button';
@@ -82,7 +82,25 @@ interface Props {
     productAttributes: Record<number, string>;
 }
 
+// Define an interface for the auth props
+interface PageProps {
+    auth: {
+        user: {
+            id: number;
+            name: string;
+            email: string;
+            is_admin: boolean;
+        } | null;
+    };
+    // Add index signature to satisfy Inertia's PageProps constraint
+    [key: string]: any;
+}
+
 export default function EditProduct({ product, catalogues, stores, attributes, productAttributes }: Props) {
+    // Get auth information to check if user is admin
+    const { auth } = usePage<PageProps>().props;
+    const isAdmin = auth.user && auth.user.is_admin;
+
     const { data, setData, post, processing, errors } = useForm({
         title: product.title || '',
         sku: product.sku || '',
@@ -108,30 +126,26 @@ export default function EditProduct({ product, catalogues, stores, attributes, p
     const [existingGallery, setExistingGallery] = useState<GalleryImage[]>(product.gallery || []);
     const [editorContent, setEditorContent] = useState(product.content || '');
 
-    // Initialize attribute values from productAttributes
     useEffect(() => {
         if (productAttributes) {
             let initialAttributes = {} as Record<number, string | string[]>;
-            
+
             Object.entries(productAttributes).forEach(([attrId, value]) => {
-                // Find attribute by ID
                 const attribute = attributes.find(attr => attr.id === parseInt(attrId));
-                
+
                 if (attribute) {
                     if (attribute.type === 'multiselect') {
-                        // For multiselect, split comma-separated values
                         initialAttributes[parseInt(attrId)] = value.split(',');
                     } else {
                         initialAttributes[parseInt(attrId)] = value;
                     }
                 }
             });
-            
+
             setData('attributes', initialAttributes);
         }
     }, [productAttributes]);
 
-    // Breadcrumbs for navigation
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: __('admin.products', 'Products'),
@@ -146,7 +160,6 @@ export default function EditProduct({ product, catalogues, stores, attributes, p
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
 
-        // Update content from editor
         if (editorContent) {
             setData('content', editorContent);
         }
@@ -183,9 +196,9 @@ export default function EditProduct({ product, catalogues, stores, attributes, p
                     },
                     body: JSON.stringify({ media_id: mediaId }),
                 });
-                
+
                 const result = await response.json();
-                
+
                 if (result.success) {
                     setExistingGallery(existingGallery.filter(img => img.id !== mediaId));
                 } else {
@@ -208,15 +221,15 @@ export default function EditProduct({ product, catalogues, stores, attributes, p
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`${__('admin.edit_product', 'Edit Product')}: ${product.title}`} />
-            
+
             <div className="space-y-6 p-6">
                 <div className="flex items-center justify-between">
-                    <HeadingSmall 
-                        title={`${__('admin.edit_product', 'Edit Product')}: ${product.title}`} 
-                        description={__('admin.edit_product_description', 'Update product information')} 
+                    <HeadingSmall
+                        title={`${__('admin.edit_product', 'Edit Product')}: ${product.title}`}
+                        description={__('admin.edit_product_description', 'Update product information')}
                     />
                 </div>
-                
+
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <Tabs defaultValue="general" className="w-full">
                         <TabsList className="mb-4">
@@ -227,7 +240,6 @@ export default function EditProduct({ product, catalogues, stores, attributes, p
                             <TabsTrigger value="seo">{__('admin.seo', 'SEO')}</TabsTrigger>
                         </TabsList>
 
-                        {/* General Tab */}
                         <TabsContent value="general">
                             <Card>
                                 <CardHeader>
@@ -245,7 +257,7 @@ export default function EditProduct({ product, catalogues, stores, attributes, p
                                         />
                                         <InputError message={errors.title} />
                                     </div>
-                                    
+
                                     <div className="grid gap-2">
                                         <Label htmlFor="slug">{__('admin.slug', 'Slug')}</Label>
                                         <Input
@@ -258,7 +270,7 @@ export default function EditProduct({ product, catalogues, stores, attributes, p
                                             {__('admin.slug_auto_generated', 'Slug is auto-generated and cannot be changed')}
                                         </p>
                                     </div>
-                                    
+
                                     <div className="grid gap-2">
                                         <Label htmlFor="sku">{__('admin.sku', 'SKU')}</Label>
                                         <Input
@@ -269,7 +281,7 @@ export default function EditProduct({ product, catalogues, stores, attributes, p
                                         />
                                         <InputError message={errors.sku} />
                                     </div>
-                                    
+
                                     <div className="grid gap-2">
                                         <Label htmlFor="description">{__('admin.short_description', 'Short Description')}</Label>
                                         <Textarea
@@ -281,7 +293,7 @@ export default function EditProduct({ product, catalogues, stores, attributes, p
                                         />
                                         <InputError message={errors.description} />
                                     </div>
-                                    
+
                                     <div className="grid gap-2">
                                         <Label htmlFor="content">{__('admin.full_description', 'Full Description')}</Label>
                                         <Textarea
@@ -296,10 +308,9 @@ export default function EditProduct({ product, catalogues, stores, attributes, p
                                         />
                                         <InputError message={errors.content} />
                                     </div>
-                                    
+
                                     <div className="grid gap-2">
                                         <Label htmlFor="catalogue_id">{__('admin.catalogue', 'Catalogue')} <span className="text-destructive">*</span></Label>
-                                        {/* Replace DropdownMenu with multiple selection */}
                                         <div className="border rounded-md p-4 max-h-[300px] overflow-y-auto">
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                                                 {catalogues.map((cat) => (
@@ -310,23 +321,21 @@ export default function EditProduct({ product, catalogues, stores, attributes, p
                                                             onCheckedChange={(checked) => {
                                                                 const isChecked = !!checked;
                                                                 let newCatalogueIds = [...data.catalogue_ids];
-                                                                
+
                                                                 if (isChecked) {
                                                                     newCatalogueIds.push(cat.id.toString());
-                                                                    // If this is the first selection, also set it as the primary catalogue
                                                                     if (data.catalogue_id === '') {
                                                                         setData('catalogue_id', cat.id.toString());
                                                                     }
                                                                 } else {
                                                                     newCatalogueIds = newCatalogueIds.filter(id => id !== cat.id.toString());
-                                                                    // If removing the primary catalogue, set the first available as primary
                                                                     if (data.catalogue_id === cat.id.toString() && newCatalogueIds.length > 0) {
                                                                         setData('catalogue_id', newCatalogueIds[0]);
                                                                     } else if (newCatalogueIds.length === 0) {
                                                                         setData('catalogue_id', '');
                                                                     }
                                                                 }
-                                                                
+
                                                                 setData('catalogue_ids', newCatalogueIds);
                                                             }}
                                                         />
@@ -340,53 +349,61 @@ export default function EditProduct({ product, catalogues, stores, attributes, p
                                         </div>
                                         <InputError message={errors.catalogue_ids || errors.catalogue_id} />
                                     </div>
-                                    
+
                                     {stores.length > 0 && (
                                         <div className="grid gap-2">
                                             <Label htmlFor="store_id">{__('admin.store', 'Store')}</Label>
-                                            {/* Replace Select with DropdownMenu */}
                                             <DropdownMenu>
                                                 <DropdownMenuTrigger asChild>
-                                                    <Button variant="outline" className="w-full justify-between">
-                                                        {data.store_id 
-                                                            ? stores.find(s => s.id.toString() === data.store_id)?.name 
+                                                    <Button variant="outline" className="w-full justify-between" disabled={!isAdmin && stores.length === 1}>
+                                                        {data.store_id
+                                                            ? stores.find(s => s.id.toString() === data.store_id)?.name
                                                             : __('admin.select_store', 'Select store')}
                                                         <svg className="h-4 w-4 opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                                             <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
                                                         </svg>
                                                     </Button>
                                                 </DropdownMenuTrigger>
-                                                <DropdownMenuContent align="center" className="w-[300px]">
-                                                    <DropdownMenuItem onClick={() => setData('store_id', '')}>
-                                                        {__('admin.none', 'None')}
-                                                    </DropdownMenuItem>
-                                                    {stores.map((store) => (
-                                                        <DropdownMenuItem 
-                                                            key={store.id} 
-                                                            onClick={() => setData('store_id', store.id.toString())}
-                                                        >
-                                                            {store.name}
-                                                        </DropdownMenuItem>
-                                                    ))}
-                                                </DropdownMenuContent>
+                                                {isAdmin && (
+                                                    <DropdownMenuContent align="center" className="w-[300px]">
+                                                        {stores.length > 1 && (
+                                                            <DropdownMenuItem onClick={() => setData('store_id', '')}>
+                                                                {__('admin.none', 'None')}
+                                                            </DropdownMenuItem>
+                                                        )}
+                                                        {stores.map((store) => (
+                                                            <DropdownMenuItem
+                                                                key={store.id}
+                                                                onClick={() => setData('store_id', store.id.toString())}
+                                                            >
+                                                                {store.name}
+                                                            </DropdownMenuItem>
+                                                        ))}
+                                                    </DropdownMenuContent>
+                                                )}
                                             </DropdownMenu>
+                                            {!isAdmin && stores.length === 1 && (
+                                                <p className="text-sm text-muted-foreground">
+                                                    {__('admin.store_fixed', 'Products can only be assigned to your store')}
+                                                </p>
+                                            )}
                                             <InputError message={errors.store_id} />
                                         </div>
                                     )}
-                                    
+
                                     <div className="flex items-center space-x-2">
-                                        <Switch 
-                                            id="is_active" 
-                                            checked={data.is_active} 
+                                        <Switch
+                                            id="is_active"
+                                            checked={data.is_active}
                                             onCheckedChange={(checked) => setData('is_active', checked)}
                                         />
                                         <Label htmlFor="is_active">{__('admin.is_active', 'Active')}</Label>
                                     </div>
-                                    
+
                                     <div className="flex items-center space-x-2">
-                                        <Switch 
-                                            id="is_featured" 
-                                            checked={data.is_featured} 
+                                        <Switch
+                                            id="is_featured"
+                                            checked={data.is_featured}
                                             onCheckedChange={(checked) => setData('is_featured', checked)}
                                         />
                                         <Label htmlFor="is_featured">{__('admin.is_featured', 'Featured Product')}</Label>
@@ -395,7 +412,6 @@ export default function EditProduct({ product, catalogues, stores, attributes, p
                             </Card>
                         </TabsContent>
 
-                        {/* Data Tab */}
                         <TabsContent value="data">
                             <Card>
                                 <CardHeader>
@@ -416,7 +432,7 @@ export default function EditProduct({ product, catalogues, stores, attributes, p
                                         />
                                         <InputError message={errors.price} />
                                     </div>
-                                    
+
                                     <div className="grid gap-2">
                                         <Label htmlFor="sale_price">{__('admin.sale_price', 'Sale Price')}</Label>
                                         <Input
@@ -430,7 +446,7 @@ export default function EditProduct({ product, catalogues, stores, attributes, p
                                         />
                                         <InputError message={errors.sale_price} />
                                     </div>
-                                    
+
                                     <div className="grid gap-2">
                                         <Label htmlFor="stock_quantity">{__('admin.stock_quantity', 'Stock Quantity')} <span className="text-destructive">*</span></Label>
                                         <Input
@@ -448,7 +464,6 @@ export default function EditProduct({ product, catalogues, stores, attributes, p
                             </Card>
                         </TabsContent>
 
-                        {/* Media Tab */}
                         <TabsContent value="media">
                             <Card>
                                 <CardHeader>
@@ -471,7 +486,7 @@ export default function EditProduct({ product, catalogues, stores, attributes, p
                                             previewClassName="w-full h-60 object-contain"
                                         />
                                     </div>
-                                    
+
                                     <div className="grid gap-4">
                                         <div className="flex flex-wrap items-center justify-between">
                                             <Label>{__('admin.gallery', 'Product Gallery')}</Label>
@@ -479,9 +494,8 @@ export default function EditProduct({ product, catalogues, stores, attributes, p
                                                 {existingGallery.length + galleryFiles.length} / 8 {__('admin.images', 'images')}
                                             </div>
                                         </div>
-                                        
+
                                         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                                            {/* Existing gallery images */}
                                             {existingGallery.map((image) => (
                                                 <div key={image.id} className="relative border rounded-md overflow-hidden">
                                                     <img
@@ -498,8 +512,7 @@ export default function EditProduct({ product, catalogues, stores, attributes, p
                                                     </button>
                                                 </div>
                                             ))}
-                                            
-                                            {/* New gallery images */}
+
                                             {galleryFiles.map((file, index) => (
                                                 <div key={`new-${index}`} className="relative border rounded-md overflow-hidden">
                                                     <img
@@ -516,8 +529,7 @@ export default function EditProduct({ product, catalogues, stores, attributes, p
                                                     </button>
                                                 </div>
                                             ))}
-                                            
-                                            {/* Upload button - only show if less than 8 images */}
+
                                             {(existingGallery.length + galleryFiles.length) < 8 && (
                                                 <div className="border-2 border-dashed rounded-md p-6 flex flex-col items-center justify-center cursor-pointer hover:border-primary/50">
                                                     <input
@@ -529,7 +541,6 @@ export default function EditProduct({ product, catalogues, stores, attributes, p
                                                         onChange={(e) => {
                                                             if (e.target.files) {
                                                                 const files = Array.from(e.target.files);
-                                                                // Limit total to 8 images
                                                                 const remaining = 8 - (existingGallery.length + galleryFiles.length);
                                                                 const filesToAdd = files.slice(0, remaining);
                                                                 handleGalleryUpload(filesToAdd);
@@ -558,7 +569,6 @@ export default function EditProduct({ product, catalogues, stores, attributes, p
                             </Card>
                         </TabsContent>
 
-                        {/* Attributes Tab */}
                         <TabsContent value="attributes">
                             <Card>
                                 <CardHeader>
@@ -578,7 +588,7 @@ export default function EditProduct({ product, catalogues, stores, attributes, p
                                                         {attribute.name}
                                                         {attribute.is_required && <span className="text-destructive ml-1">*</span>}
                                                     </h3>
-                                                    
+
                                                     {attribute.type === 'text' && (
                                                         <Input
                                                             placeholder={`Enter ${attribute.name.toLowerCase()}`}
@@ -586,7 +596,7 @@ export default function EditProduct({ product, catalogues, stores, attributes, p
                                                             onChange={(e) => handleAttributeChange(attribute.id, e.target.value)}
                                                         />
                                                     )}
-                                                    
+
                                                     {attribute.type === 'textarea' && (
                                                         <Textarea
                                                             placeholder={`Enter ${attribute.name.toLowerCase()}`}
@@ -595,7 +605,7 @@ export default function EditProduct({ product, catalogues, stores, attributes, p
                                                             rows={3}
                                                         />
                                                     )}
-                                                    
+
                                                     {attribute.type === 'select' && (
                                                         <Select
                                                             value={(data.attributes[attribute.id] as string) || ''}
@@ -613,13 +623,13 @@ export default function EditProduct({ product, catalogues, stores, attributes, p
                                                             </SelectContent>
                                                         </Select>
                                                     )}
-                                                    
+
                                                     {attribute.type === 'multiselect' && (
                                                         <div className="grid grid-cols-2 gap-2">
                                                             {attribute.values.map((value) => {
                                                                 const attributeValues = (data.attributes[attribute.id] as string[]) || [];
                                                                 const checked = attributeValues.includes(value.id.toString());
-                                                                
+
                                                                 return (
                                                                     <div key={value.id} className="flex items-center space-x-2">
                                                                         <Checkbox
@@ -627,7 +637,7 @@ export default function EditProduct({ product, catalogues, stores, attributes, p
                                                                             checked={checked}
                                                                             onCheckedChange={(isChecked) => {
                                                                                 let newValues = [...attributeValues];
-                                                                                
+
                                                                                 if (isChecked) {
                                                                                     if (!newValues.includes(value.id.toString())) {
                                                                                         newValues.push(value.id.toString());
@@ -635,7 +645,7 @@ export default function EditProduct({ product, catalogues, stores, attributes, p
                                                                                 } else {
                                                                                     newValues = newValues.filter(v => v !== value.id.toString());
                                                                                 }
-                                                                                
+
                                                                                 handleAttributeChange(attribute.id, newValues);
                                                                             }}
                                                                         />
@@ -647,7 +657,7 @@ export default function EditProduct({ product, catalogues, stores, attributes, p
                                                             })}
                                                         </div>
                                                     )}
-                                                    
+
                                                     {attribute.type === 'radio' && (
                                                         <RadioGroup
                                                             value={(data.attributes[attribute.id] as string) || ''}
@@ -676,7 +686,6 @@ export default function EditProduct({ product, catalogues, stores, attributes, p
                             </Card>
                         </TabsContent>
 
-                        {/* SEO Tab */}
                         <TabsContent value="seo">
                             <Card>
                                 <CardHeader>
@@ -694,7 +703,7 @@ export default function EditProduct({ product, catalogues, stores, attributes, p
                                         />
                                         <InputError message={errors.meta_title} />
                                     </div>
-                                    
+
                                     <div className="grid gap-2">
                                         <Label htmlFor="meta_description">{__('admin.meta_description', 'Meta Description')}</Label>
                                         <Textarea

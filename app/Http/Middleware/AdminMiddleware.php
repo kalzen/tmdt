@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class AdminMiddleware
 {
@@ -17,12 +18,19 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        // Check if user is authenticated and has admin privileges
-        if (!Auth::check() || !Auth::user()->is_admin) {
-            // If not admin, redirect to dashboard with error message
-            return redirect()->route('dashboard')->with('error', 'You do not have permission to access this area.');
+        // Check if user is logged in
+        if (!Auth::check()) {
+            return redirect('/login');
         }
 
-        return $next($request);
+        $user = Auth::user();
+
+        // Check if user is admin
+        if ($user->is_admin) {
+            return $next($request);
+        }
+
+        // For non-admin users, return 404 not found page
+        return Inertia::render('errors/not-found');
     }
 }

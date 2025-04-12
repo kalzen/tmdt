@@ -66,15 +66,19 @@ Route::get('/language/{locale}', [LanguageController::class, 'switch'])
     ->where('locale', 'en|vi');
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('posts', PostController::class);
-    Route::resource('catalogues', CatalogueController::class);
+    
     Route::resource('products', ProductController::class);
+    // Store routes
+    Route::resource('stores', StoreController::class);
     
     // Thêm route xóa media của sản phẩm
     Route::post('products/{product}/delete-media', [ProductController::class, 'deleteMedia'])
         ->name('products.delete-media');
-    
+    Route::middleware('is_admin')->group(function () {
+    Route::resource('catalogues', CatalogueController::class);
     // Thêm routes cho Config
     Route::resource('configs', ConfigController::class)->except(['show']);
     
@@ -105,13 +109,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     
     // Attribute routes
     Route::resource('attributes', AttributeController::class);
+    });
     
-    // Store routes
-    Route::resource('stores', StoreController::class);
 });
 
 // Thêm route nhóm cho sliders
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'is_admin'])->group(function () {
     // Quản lý Sliders
     Route::resource('sliders', SliderController::class);
     
@@ -125,7 +128,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('slider-items/reorder', [SliderItemController::class, 'reorder'])->name('slider-items.reorder');
 });
 
-Route::resource('posts', PostController::class)->middleware(['auth', 'verified']);
-Route::resource('categories', CategoryController::class)->middleware(['auth', 'verified']);
+Route::resource('posts', PostController::class)->middleware(['auth', 'verified', 'is_admin']);
+Route::resource('categories', CategoryController::class)->middleware(['auth', 'verified', 'is_admin']);
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
