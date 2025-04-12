@@ -10,33 +10,34 @@ import { Slider } from '@/components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useState } from 'react';
-import { Search, SlidersHorizontal, X } from 'lucide-react';
+import { Search, SlidersHorizontal, X, ChevronDown, ChevronRight, Filter } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
+import { Separator } from '@/components/ui/separator';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 interface Product {
   id: number;
   name: string;
+  slug: string;
   price: number;
+  sale_price: number | null;
+  discount_percentage: number;
   image: string;
   store: {
     id: number;
     name: string;
+    slug: string;
   };
   category: {
     id: number;
     name: string;
-  };
+  } | null;
 }
 
 interface ProductsProps {
   products: {
     data: Product[];
-    links: {
-      url: string | null;
-      label: string;
-      active: boolean;
-    }[];
     meta: {
       current_page: number;
       from: number;
@@ -53,18 +54,19 @@ interface ProductsProps {
     };
   };
   filters: {
-    category?: string;
+    catalogue?: string;
     store?: string;
     min_price?: number;
     max_price?: number;
     search?: string;
     sort_by?: string;
     sort_direction?: string;
+    per_page?: number;
   };
 }
 
 export default function Products({ products, filters }: ProductsProps) {
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isFilterOpenOnMobile, setIsFilterOpenOnMobile] = useState(false);
   const [searchTerm, setSearchTerm] = useState(filters.search || '');
   const [priceRange, setPriceRange] = useState<[number, number]>([
     filters.min_price || 0,
@@ -72,14 +74,14 @@ export default function Products({ products, filters }: ProductsProps) {
   ]);
   const [sortBy, setSortBy] = useState(filters.sort_by || 'created_at');
   const [sortDirection, setSortDirection] = useState(filters.sort_direction || 'desc');
+  const [perPage, setPerPage] = useState(filters.per_page?.toString() || '20');
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    window.location.href = `/products?search=${searchTerm}`;
+    window.location.href = `/product?search=${searchTerm}`;
   };
 
   const applyFilters = () => {
-    // Create an object with all filter parameters, but filter out undefined values
     const filterParams: Record<string, string> = {};
     
     if (searchTerm) {
@@ -90,30 +92,29 @@ export default function Products({ products, filters }: ProductsProps) {
     filterParams.max_price = priceRange[1].toString();
     filterParams.sort_by = sortBy;
     filterParams.sort_direction = sortDirection;
+    filterParams.per_page = perPage;
     
-    if (filters.category) {
-      filterParams.category = filters.category;
+    if (filters.catalogue) {
+      filterParams.catalogue = filters.catalogue;
     }
     
     if (filters.store) {
       filterParams.store = filters.store;
     }
     
-    // Create URLSearchParams from the filtered object
     const queryParams = new URLSearchParams(filterParams);
-    window.location.href = `/products?${queryParams.toString()}`;
+    window.location.href = `/product?${queryParams.toString()}`;
   };
 
   const clearFilters = () => {
-    window.location.href = '/products';
+    window.location.href = '/product';
   };
 
   return (
     <FrontendLayout>
-      <Head title="Products - 84Gate Marketplace" />
+      <Head title="Products - Marketplace" />
       
       <div className="container px-4 py-8 mx-auto">
-        {/* Breadcrumbs */}
         <Breadcrumb className="mb-6">
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -126,32 +127,77 @@ export default function Products({ products, filters }: ProductsProps) {
           </BreadcrumbList>
         </Breadcrumb>
         
-        {/* Search and Filters */}
-        <div className="flex flex-col md:flex-row gap-4 mb-8">
-          <form onSubmit={handleSearch} className="flex-1">
-            <div className="relative">
-              <Input
-                type="search"
-                placeholder="Search products..."
-                className="pr-10"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <Button 
-                type="submit" 
-                variant="ghost" 
-                size="icon" 
-                className="absolute right-0 top-0 h-full"
-              >
-                <Search className="h-4 w-4" />
-                <span className="sr-only">Search</span>
-              </Button>
-            </div>
-          </form>
-          
-          <div className="flex gap-2">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+          <div>
+            <h1 className="text-2xl font-bold">Products</h1>
+            <p className="text-muted-foreground">
+              {products.meta.total} products found
+            </p>
+          </div>
+
+          <div className="flex gap-2 w-full md:w-auto">
+            <form onSubmit={handleSearch} className="flex-1">
+              <div className="relative">
+                <Input
+                  type="search"
+                  placeholder="Search products..."
+                  className="pr-10 w-full md:w-[250px]"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                <Button 
+                  type="submit" 
+                  variant="ghost" 
+                  size="icon" 
+                  className="absolute right-0 top-0 h-full"
+                >
+                  <Search className="h-4 w-4" />
+                  <span className="sr-only">Search</span>
+                </Button>
+              </div>
+            </form>
+            
+            <Sheet open={isFilterOpenOnMobile} onOpenChange={setIsFilterOpenOnMobile}>
+              <SheetTrigger asChild>
+                <Button variant="outline" className="gap-2 md:hidden">
+                  <Filter className="h-4 w-4" />
+                  Filters
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-[300px] sm:w-[350px]">
+                <div className="h-full flex flex-col">
+                  <h3 className="text-lg font-semibold mb-4">Filters</h3>
+                  <div className="space-y-6 flex-1 overflow-y-auto">
+                    {renderFilters()}
+                  </div>
+                  
+                  <div className="pt-4 border-t mt-auto">
+                    <Button 
+                      className="w-full mb-2" 
+                      onClick={() => { 
+                        applyFilters(); 
+                        setIsFilterOpenOnMobile(false); 
+                      }}
+                    >
+                      Apply Filters
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      className="w-full" 
+                      onClick={() => {
+                        clearFilters();
+                        setIsFilterOpenOnMobile(false);
+                      }}
+                    >
+                      Clear Filters
+                    </Button>
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
+            
             <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-[120px] md:w-[150px]">
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
               <SelectContent>
@@ -162,7 +208,7 @@ export default function Products({ products, filters }: ProductsProps) {
             </Select>
             
             <Select value={sortDirection} onValueChange={setSortDirection}>
-              <SelectTrigger className="w-[120px]">
+              <SelectTrigger className="w-[100px]">
                 <SelectValue placeholder="Order" />
               </SelectTrigger>
               <SelectContent>
@@ -170,177 +216,382 @@ export default function Products({ products, filters }: ProductsProps) {
                 <SelectItem value="desc">Descending</SelectItem>
               </SelectContent>
             </Select>
-            
-            <Sheet open={isFilterOpen} onOpenChange={setIsFilterOpen}>
-              <SheetTrigger asChild>
-                <Button variant="outline" className="gap-2">
-                  <SlidersHorizontal className="h-4 w-4" />
-                  Filters
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-                <div className="h-full flex flex-col">
-                  <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-lg font-semibold">Filters</h3>
-                    <Button variant="ghost" size="sm" onClick={clearFilters}>
-                      <X className="h-4 w-4 mr-1" />
-                      Clear All
-                    </Button>
-                  </div>
-                  
-                  <div className="space-y-6 flex-1 overflow-y-auto">
-                    <div>
-                      <Label className="mb-2 block">Price Range</Label>
-                      <div className="px-2">
-                        <Slider
-                          defaultValue={priceRange}
-                          max={1000}
-                          step={10}
-                          onValueChange={(value) => setPriceRange(value as [number, number])}
-                        />
-                      </div>
-                      <div className="flex items-center justify-between mt-2">
-                        <span className="text-sm">${priceRange[0]}</span>
-                        <span className="text-sm">${priceRange[1]}</span>
-                      </div>
-                    </div>
-                    
-                    {/* More filters can be added here */}
-                  </div>
-                  
-                  <div className="pt-4 border-t mt-auto">
-                    <Button className="w-full" onClick={() => { applyFilters(); setIsFilterOpen(false); }}>
-                      Apply Filters
-                    </Button>
-                  </div>
-                </div>
-              </SheetContent>
-            </Sheet>
           </div>
         </div>
         
-        {/* Active Filters */}
-        {(filters.search || filters.min_price || filters.max_price || filters.category || filters.store) && (
-          <div className="flex flex-wrap gap-2 mb-6">
-            {filters.search && (
-              <div className="bg-muted rounded-full px-3 py-1 text-sm flex items-center">
-                <span className="mr-1">Search: {filters.search}</span>
-                <Link href={`/products?${new URLSearchParams(
-                  Object.entries({ ...filters })
-                    .filter(([key]) => key !== 'search')
-                    .reduce((obj, [key, value]) => ({ ...obj, [key]: value }), {})
-                ).toString()}`}>
-                  <X className="h-3 w-3" />
-                </Link>
-              </div>
-            )}
-            
-            {(filters.min_price || filters.max_price) && (
-              <div className="bg-muted rounded-full px-3 py-1 text-sm flex items-center">
-                <span className="mr-1">Price: ${filters.min_price || 0} - ${filters.max_price || 1000}</span>
-                <Link href={`/products?${new URLSearchParams(
-                  Object.entries({ ...filters })
-                    .filter(([key]) => key !== 'min_price' && key !== 'max_price')
-                    .reduce((obj, [key, value]) => ({ ...obj, [key]: value }), {})
-                ).toString()}`}>
-                  <X className="h-3 w-3" />
-                </Link>
-              </div>
-            )}
-            
-            {filters.category && (
-              <div className="bg-muted rounded-full px-3 py-1 text-sm flex items-center">
-                <span className="mr-1">Category: {filters.category}</span>
-                <Link href={`/products?${new URLSearchParams(
-                  Object.entries({ ...filters })
-                    .filter(([key]) => key !== 'category')
-                    .reduce((obj, [key, value]) => ({ ...obj, [key]: value }), {})
-                ).toString()}`}>
-                  <X className="h-3 w-3" />
-                </Link>
-              </div>
-            )}
-            
-            {filters.store && (
-              <div className="bg-muted rounded-full px-3 py-1 text-sm flex items-center">
-                <span className="mr-1">Store: {filters.store}</span>
-                <Link href={`/products?${new URLSearchParams(
-                  Object.entries({ ...filters })
-                    .filter(([key]) => key !== 'store')
-                    .reduce((obj, [key, value]) => ({ ...obj, [key]: value }), {})
-                ).toString()}`}>
-                  <X className="h-3 w-3" />
-                </Link>
-              </div>
-            )}
-          </div>
-        )}
-        
-        {/* Products Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mb-8">
-          {products.data.map((product) => (
-            <Card key={product.id} className="group overflow-hidden">
-              <div className="aspect-square relative overflow-hidden">
-                <img 
-                  src={product.image} 
-                  alt={product.name}
-                  className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                />
-              </div>
-              <CardContent className="p-4">
-                <Link 
-                  href={`/products/${product.id}`}
-                  className="font-medium line-clamp-2 group-hover:text-primary transition-colors"
+        <div className="flex flex-col md:flex-row gap-8">
+          <div className="hidden md:block w-[280px] shrink-0">
+            <div className="bg-muted/20 rounded-lg p-4 sticky top-24">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="font-semibold">Filters</h3>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-xs h-auto p-1" 
+                  onClick={clearFilters}
                 >
-                  {product.name}
-                </Link>
-                <div className="flex items-center justify-between mt-2">
-                  <span className="font-bold text-primary">${product.price.toFixed(2)}</span>
-                  <Link 
-                    href={`/stores/${product.store.id}`}
-                    className="text-xs text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    {product.store.name}
-                  </Link>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-        
-        {/* Pagination */}
-        {products.meta.last_page > 1 && (
-          <Pagination>
-            <div className="flex items-center justify-center">
-              {products.links.map((link, i) => (
-                <Link
-                  key={i}
-                  href={link.url || '#'}
-                  className={`px-4 py-2 text-sm border-t border-b ${
-                    i === 0 ? 'rounded-l-md border-l' : ''
-                  } ${
-                    i === products.links.length - 1 ? 'rounded-r-md border-r' : ''
-                  } ${
-                    link.active
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-background hover:bg-muted'
-                  } ${!link.url ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  dangerouslySetInnerHTML={{ __html: link.label }}
-                />
+                  Clear all
+                </Button>
+              </div>
+              
+              {renderFilters()}
+              
+              <Button onClick={applyFilters} className="w-full mt-4">
+                Apply Filters
+              </Button>
+            </div>
+          </div>
+          
+          <div className="flex-1">
+            {hasActiveFilters() && (
+              <div className="flex flex-wrap gap-2 mb-6">
+                {filters.search && (
+                  <div className="bg-muted rounded-full px-3 py-1 text-sm flex items-center">
+                    <span className="mr-1">Search: {filters.search}</span>
+                    <Link href={getFilterUrlWithout('search')}>
+                      <X className="h-3 w-3" />
+                    </Link>
+                  </div>
+                )}
+                
+                {(filters.min_price || filters.max_price) && (
+                  <div className="bg-muted rounded-full px-3 py-1 text-sm flex items-center">
+                    <span className="mr-1">Price: ${filters.min_price || 0} - ${filters.max_price || 1000}</span>
+                    <Link href={getFilterUrlWithout(['min_price', 'max_price'])}>
+                      <X className="h-3 w-3" />
+                    </Link>
+                  </div>
+                )}
+                
+                {filters.catalogue && (
+                  <div className="bg-muted rounded-full px-3 py-1 text-sm flex items-center">
+                    <span className="mr-1">Category: {filters.catalogue}</span>
+                    <Link href={getFilterUrlWithout('catalogue')}>
+                      <X className="h-3 w-3" />
+                    </Link>
+                  </div>
+                )}
+                
+                {filters.store && (
+                  <div className="bg-muted rounded-full px-3 py-1 text-sm flex items-center">
+                    <span className="mr-1">Store: {filters.store}</span>
+                    <Link href={getFilterUrlWithout('store')}>
+                      <X className="h-3 w-3" />
+                    </Link>
+                  </div>
+                )}
+              </div>
+            )}
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+              {products.data.map((product) => (
+                <Card key={product.id} className="group overflow-hidden">
+                  <div className="aspect-square relative overflow-hidden">
+                    <img 
+                      src={product.image} 
+                      alt={product.name}
+                      className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                    />
+                    {product.discount_percentage > 0 && (
+                      <div className="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded-md">
+                        -{product.discount_percentage}%
+                      </div>
+                    )}
+                  </div>
+                  <CardContent className="p-4">
+                    <Link 
+                      href={`/product/${product.slug}`}
+                      className="font-medium line-clamp-2 group-hover:text-primary transition-colors"
+                    >
+                      {product.name}
+                    </Link>
+                    <div className="flex items-center justify-between mt-2">
+                      <div>
+                        {product.sale_price ? (
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-primary">${product.sale_price.toFixed(2)}</span>
+                            <span className="text-xs text-muted-foreground line-through">${product.price.toFixed(2)}</span>
+                          </div>
+                        ) : (
+                          <span className="font-bold text-primary">${product.price.toFixed(2)}</span>
+                        )}
+                      </div>
+                      <Link 
+                        href={`/store/${product.store.slug}`}
+                        className="text-xs text-muted-foreground hover:text-primary transition-colors"
+                      >
+                        {product.store.name}
+                      </Link>
+                    </div>
+                  </CardContent>
+                </Card>
               ))}
             </div>
-          </Pagination>
-        )}
-        
-        {/* No Products Found */}
-        {products.data.length === 0 && (
-          <div className="text-center py-12">
-            <h3 className="text-xl font-semibold mb-2">No products found</h3>
-            <p className="text-muted-foreground mb-6">Try adjusting your search or filter criteria</p>
-            <Button onClick={clearFilters}>Clear All Filters</Button>
+            
+            {products.data.length === 0 && (
+              <div className="text-center py-12 bg-muted/20 rounded-lg">
+                <h3 className="text-xl font-semibold mb-2">No products found</h3>
+                <p className="text-muted-foreground mb-6">Try adjusting your search or filter criteria</p>
+                <Button onClick={clearFilters}>Clear All Filters</Button>
+              </div>
+            )}
+            
+            {products.meta.last_page > 1 && (
+              <div className="flex items-center justify-between">
+                <div className="text-sm text-muted-foreground">
+                  Showing {products.meta.from}-{products.meta.to} of {products.meta.total} products
+                </div>
+                
+                <Pagination>
+                  <div className="flex items-center justify-center">
+                    {products.meta.current_page > 1 && (
+                      <Link 
+                        href={getPageUrl(products.meta.current_page - 1)}
+                        className="px-4 py-2 text-sm border rounded-l-md hover:bg-muted"
+                      >
+                        Previous
+                      </Link>
+                    )}
+                    
+                    {Array.from({ length: products.meta.last_page }, (_, i) => i + 1)
+                      .filter(page => 
+                        page === 1 || 
+                        page === products.meta.last_page || 
+                        (page >= products.meta.current_page - 1 && 
+                         page <= products.meta.current_page + 1)
+                      )
+                      .map((page, i, array) => {
+                        if (i > 0 && page > array[i-1] + 1) {
+                          return (
+                            <span 
+                              key={`ellipsis-${page}`}
+                              className="px-4 py-2 text-sm border bg-background"
+                            >
+                              ...
+                            </span>
+                          );
+                        }
+                        
+                        return (
+                          <Link
+                            key={page}
+                            href={getPageUrl(page)}
+                            className={`px-4 py-2 text-sm border ${
+                              page === products.meta.current_page
+                                ? 'bg-primary text-primary-foreground'
+                                : 'bg-background hover:bg-muted'
+                            }`}
+                          >
+                            {page}
+                          </Link>
+                        );
+                      })
+                    }
+                    
+                    {products.meta.current_page < products.meta.last_page && (
+                      <Link 
+                        href={getPageUrl(products.meta.current_page + 1)}
+                        className="px-4 py-2 text-sm border rounded-r-md hover:bg-muted"
+                      >
+                        Next
+                      </Link>
+                    )}
+                  </div>
+                </Pagination>
+                
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground">Show:</span>
+                  <Select value={perPage} onValueChange={(value) => {
+                    setPerPage(value);
+                    const newUrl = getFilterUrlWithout('page');
+                    window.location.href = newUrl + (newUrl.includes('?') ? '&' : '?') + `per_page=${value}`;
+                  }}>
+                    <SelectTrigger className="w-[70px]">
+                      <SelectValue placeholder="20" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="12">12</SelectItem>
+                      <SelectItem value="20">20</SelectItem>
+                      <SelectItem value="36">36</SelectItem>
+                      <SelectItem value="48">48</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </FrontendLayout>
   );
+  
+  function renderFilters() {
+    return (
+      <div className="space-y-5">
+        <div>
+          <h4 className="font-medium mb-2">Price Range</h4>
+          <div className="px-2">
+            <Slider
+              value={priceRange}
+              max={1000}
+              step={10}
+              onValueChange={(value) => setPriceRange(value as [number, number])}
+            />
+          </div>
+          <div className="flex items-center justify-between mt-2">
+            <span className="text-sm">${priceRange[0]}</span>
+            <span className="text-sm">${priceRange[1]}</span>
+          </div>
+          <div className="flex items-center gap-2 mt-2">
+            <Input
+              className="h-8"
+              type="number"
+              min={0}
+              max={priceRange[1]}
+              value={priceRange[0]}
+              onChange={(e) => setPriceRange([parseInt(e.target.value) || 0, priceRange[1]])}
+            />
+            <span>-</span>
+            <Input
+              className="h-8"
+              type="number"
+              min={priceRange[0]}
+              max={1000}
+              value={priceRange[1]}
+              onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value) || 0])}
+            />
+          </div>
+        </div>
+        
+        <Separator />
+        
+        <Accordion type="multiple" className="w-full">
+          <AccordionItem value="categories" className="border-none">
+            <AccordionTrigger className="py-1">
+              <span className="text-sm font-medium">Categories</span>
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="pl-2 space-y-2">
+                <div className="flex items-center gap-2">
+                  <Checkbox id="category-electronics" />
+                  <Label htmlFor="category-electronics" className="text-sm">Electronics</Label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Checkbox id="category-clothing" />
+                  <Label htmlFor="category-clothing" className="text-sm">Clothing</Label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Checkbox id="category-home" />
+                  <Label htmlFor="category-home" className="text-sm">Home & Garden</Label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Checkbox id="category-beauty" />
+                  <Label htmlFor="category-beauty" className="text-sm">Beauty</Label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Checkbox id="category-sports" />
+                  <Label htmlFor="category-sports" className="text-sm">Sports</Label>
+                </div>
+                <Button variant="link" size="sm" className="p-0 h-auto text-xs">
+                  View more categories
+                </Button>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+        
+        <Separator />
+        
+        <div>
+          <h4 className="font-medium mb-2">Availability</h4>
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <Checkbox id="in-stock" />
+              <Label htmlFor="in-stock" className="text-sm">In Stock</Label>
+            </div>
+            <div className="flex items-center gap-2">
+              <Checkbox id="out-of-stock" />
+              <Label htmlFor="out-of-stock" className="text-sm">Out of Stock</Label>
+            </div>
+          </div>
+        </div>
+        
+        <Separator />
+        
+        <div>
+          <h4 className="font-medium mb-2">Rating</h4>
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <Checkbox id="rating-5" />
+              <Label htmlFor="rating-5" className="text-sm flex">
+                <span>★★★★★</span>
+                <span className="text-muted-foreground ml-1">(5 stars)</span>
+              </Label>
+            </div>
+            <div className="flex items-center gap-2">
+              <Checkbox id="rating-4" />
+              <Label htmlFor="rating-4" className="text-sm flex">
+                <span>★★★★☆</span>
+                <span className="text-muted-foreground ml-1">(4+ stars)</span>
+              </Label>
+            </div>
+            <div className="flex items-center gap-2">
+              <Checkbox id="rating-3" />
+              <Label htmlFor="rating-3" className="text-sm flex">
+                <span>★★★☆☆</span>
+                <span className="text-muted-foreground ml-1">(3+ stars)</span>
+              </Label>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
+  function hasActiveFilters() {
+    return !!(
+      filters.search || 
+      filters.min_price || 
+      filters.max_price || 
+      filters.catalogue || 
+      filters.store
+    );
+  }
+  
+  function getFilterUrlWithout(keysToRemove: string | string[]) {
+    const keysArray = Array.isArray(keysToRemove) ? keysToRemove : [keysToRemove];
+    const currentParams = { ...filters };
+    
+    keysArray.forEach(key => {
+      if (key in currentParams) {
+        // Use a type assertion to tell TypeScript this is safe
+        delete (currentParams as Record<string, any>)[key];
+      }
+    });
+    
+    const queryParams = new URLSearchParams();
+    
+    Object.entries(currentParams).forEach(([key, value]) => {
+      if (value !== undefined) {
+        queryParams.append(key, value.toString());
+      }
+    });
+    
+    const queryString = queryParams.toString();
+    return `/product${queryString ? `?${queryString}` : ''}`;
+  }
+  
+  function getPageUrl(page: number) {
+    const currentParams = { ...filters };
+    const queryParams = new URLSearchParams();
+    
+    Object.entries(currentParams).forEach(([key, value]) => {
+      if (key !== 'page' && value !== undefined) {
+        queryParams.append(key, value.toString());
+      }
+    });
+    
+    queryParams.set('page', page.toString());
+    return `/product?${queryParams.toString()}`;
+  }
 }
