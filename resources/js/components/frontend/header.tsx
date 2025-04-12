@@ -86,7 +86,7 @@ export function Header({ siteTitle = '84Gate', logoPath }: HeaderProps) {
                   <Link href={route('frontend.categories.index')} className="text-lg font-semibold">Categories</Link>
                   <Link href={route('frontend.stores.index')} className="text-lg font-semibold">Stores</Link>
                   <Link href={route('frontend.products.index')} className="text-lg font-semibold">Products</Link>
-                  <Link href="/posts" className="text-lg font-semibold">Blog</Link>
+                  <Link href={route('frontend.blog.index')} className="text-lg font-semibold">Blog</Link>
                   <Link href={route('frontend.contact')} className="text-lg font-semibold">Help Center</Link>
                 </nav>
               </SheetContent>
@@ -167,7 +167,7 @@ export function Header({ siteTitle = '84Gate', logoPath }: HeaderProps) {
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                   <NavigationMenuLink asChild>
-                    <Link href="/posts" className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50">
+                    <Link href={route('frontend.blog.index')} className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50">
                       Blog
                     </Link>
                   </NavigationMenuLink>

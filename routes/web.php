@@ -39,6 +39,10 @@ Route::namespace('Frontend')->group(function () {
     Route::get('/category/all', [App\Http\Controllers\Frontend\CategoryController::class, 'index'])->name('frontend.categories.index');
     Route::get('/category/{slug}', [App\Http\Controllers\Frontend\CategoryController::class, 'show'])->name('frontend.categories.show');
     
+    // Blog routes
+    Route::get('/blog', [App\Http\Controllers\Frontend\BlogController::class, 'index'])->name('frontend.blog.index');
+    Route::get('/blog/{slug}', [App\Http\Controllers\Frontend\BlogController::class, 'show'])->name('frontend.blog.show');
+    
     // Search route
     Route::get('/search', [App\Http\Controllers\Frontend\SearchController::class, 'search'])->name('frontend.search');
     
@@ -56,9 +60,6 @@ Route::namespace('Frontend')->group(function () {
     Route::get('/contact', [App\Http\Controllers\Frontend\ContactController::class, 'index'])->name('frontend.contact');
     Route::post('/contact/submit', [App\Http\Controllers\Frontend\ContactController::class, 'submit'])->name('frontend.contact.submit');
 });
-Route::get('/article/{slug}', [FrontendController::class, 'showPost'])->name('article.show');
-
-
 // Language switch route
 Route::get('/language/{locale}', [LanguageController::class, 'switch'])
     ->name('language.switch')
