@@ -160,7 +160,7 @@ class ProductController extends Controller
         }
 
         if ($request->has('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%');
+            $query->where('title', 'like', '%' . $request->search . '%');
         }
 
         // Apply sorting
@@ -168,28 +168,47 @@ class ProductController extends Controller
         $sortDirection = $request->input('sort_direction', 'desc');
         $query->orderBy($sortField, $sortDirection);
 
-        // Paginate results
-        $products = $query->paginate(20)
-            ->through(function ($product) {
+        // Paginate results with consistent format
+        $products = $query->paginate($request->input('per_page', 20))
+            ->withQueryString();
+        
+        // Format the data for the frontend with consistent structure
+        $formattedData = [
+            'data' => collect($products->items())->map(function ($product) {
                 return [
                     'id' => $product->id,
-                    'name' => $product->name,
+                    'name' => $product->title,
+                    'slug' => $product->slug,
                     'price' => $product->price,
-                    'image' => $product->getFirstMediaUrl('thumbnail') ?: '/assets/images/placeholder.jpg',
+                    'sale_price' => $product->sale_price,
+                    'discount_percentage' => $product->sale_price 
+                        ? round(($product->price - $product->sale_price) / $product->price * 100) 
+                        : 0,
+                    'image' => $product->getFirstMediaUrl('thumbnail') ?: asset('product-placeholder.jpeg'),
                     'store' => [
                         'id' => $product->store->id,
                         'name' => $product->store->name,
+                        'slug' => $product->store->slug,
                     ],
-                    'category' => [
+                    'category' => $product->catalogue ? [
                         'id' => $product->catalogue->id,
                         'name' => $product->catalogue->name,
-                    ],
+                    ] : null,
                 ];
-            });
+            })->toArray(),
+            'meta' => [
+                'current_page' => $products->currentPage(),
+                'from' => $products->firstItem() ?? 0,
+                'last_page' => $products->lastPage(),
+                'per_page' => $products->perPage(),
+                'to' => $products->lastItem() ?? 0,
+                'total' => $products->total(),
+            ],
+        ];
 
         return Inertia::render('frontend/products', [
-            'products' => $products,
-            'filters' => $request->only(['category', 'store', 'min_price', 'max_price', 'search', 'sort_by', 'sort_direction']),
+            'products' => $formattedData,
+            'filters' => $request->only(['catalogue', 'store', 'min_price', 'max_price', 'search', 'sort_by', 'sort_direction', 'per_page']),
         ]);
     }
 }
