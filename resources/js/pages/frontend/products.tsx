@@ -515,6 +515,18 @@ export default function Products({ products, filters, parentCatalogues }: Produc
           </div>
         </div>
       </div>
+      
+      {/* Floating Apply Filter Button - only visible on mobile when filters are not in a sheet */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 p-4 bg-background border-t border-border shadow-lg z-50">
+        <Button 
+          onClick={() => setIsFilterOpenOnMobile(true)} 
+          className="w-full"
+          variant="default"
+        >
+          <Filter className="h-4 w-4 mr-2" />
+          Apply Filters
+        </Button>
+      </div>
     </FrontendLayout>
   );
 
@@ -564,7 +576,7 @@ export default function Products({ products, filters, parentCatalogues }: Produc
               <span className="text-sm font-medium">Categories</span>
             </AccordionTrigger>
             <AccordionContent>
-              <div className="pl-2 space-y-2">
+              <div className="pl-2 space-y-2 max-h-screen overflow-y-auto pr-2">
                 {parentCatalogues.map((catalogue) => (
                   <div key={catalogue.id} className="flex items-center gap-2">
                     <Checkbox

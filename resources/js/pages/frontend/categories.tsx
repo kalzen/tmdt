@@ -2,6 +2,8 @@ import { Head } from '@inertiajs/react';
 import FrontendLayout from '@/layouts/frontend-layout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Link } from '@inertiajs/react';
+import { Button } from '@/components/ui/button';
+import { useState } from 'react';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 
 interface Subcategory {
@@ -24,6 +26,36 @@ interface CategoriesProps {
 }
 
 export default function Categories({ categories }: CategoriesProps) {
+  const [showFilters, setShowFilters] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
+  const [isFiltering, setIsFiltering] = useState(false);
+
+  const toggleCategorySelection = (categoryId: number) => {
+    setSelectedCategories(prev => {
+      if (prev.includes(categoryId)) {
+        return prev.filter(id => id !== categoryId);
+      } else {
+        return [...prev, categoryId];
+      }
+    });
+  };
+
+  const applyFilters = () => {
+    setIsFiltering(true);
+    // Here you would implement your filter logic
+    // For example, redirect to a filtered page or update the local state
+    
+    // Simulate filtering completion
+    setTimeout(() => {
+      setIsFiltering(false);
+      setShowFilters(false);
+    }, 500);
+  };
+
+  const clearFilters = () => {
+    setSelectedCategories([]);
+  };
+
   return (
     <FrontendLayout>
       <Head title="Categories - 84Gate Marketplace" />
@@ -171,6 +203,17 @@ export default function Categories({ categories }: CategoriesProps) {
               })}
           </div>
         </div>
+      </div>
+      
+      {/* Floating Apply Filter Button */}
+      <div className="fixed bottom-4 left-0 right-0 flex justify-center z-50 px-4">
+        <Button 
+          className="w-full max-w-md shadow-lg bg-primary hover:bg-primary/90 text-white font-medium"
+          onClick={applyFilters}
+          disabled={isFiltering}
+        >
+          {isFiltering ? "Applying..." : "Apply Filter"}
+        </Button>
       </div>
     </FrontendLayout>
   );
