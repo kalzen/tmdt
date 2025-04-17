@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\ConfigController;
 use App\Http\Controllers\Api\ImageUploadController;
 use App\Http\Controllers\Api\MemberController;
 use App\Http\Controllers\Api\DiagnosticController;
+use App\Http\Controllers\MediaController;
 
 
 /*
@@ -26,6 +27,9 @@ use App\Http\Controllers\Api\DiagnosticController;
 // Diagnostic routes to help with troubleshooting
 Route::get('ping', [DiagnosticController::class, 'ping']);
 Route::get('routes', [DiagnosticController::class, 'routes']);
+
+// Editor image upload route
+Route::post('upload-image', [MediaController::class, 'uploadImage'])->name('api.upload-image');
 
 // Public API routes - no authentication required
 Route::prefix('v1')->group(function () {

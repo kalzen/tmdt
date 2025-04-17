@@ -132,3 +132,4 @@ Route::resource('posts', PostController::class)->middleware(['auth', 'verified',
 Route::resource('categories', CategoryController::class)->middleware(['auth', 'verified', 'is_admin']);
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
+require __DIR__.'/api.php';

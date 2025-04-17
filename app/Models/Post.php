@@ -72,6 +72,18 @@ class Post extends Model implements HasMedia
                     ->width(100)
                     ->height(100);
             });
+            
+        // Collection for images uploaded through the content editor
+        $this->addMediaCollection('editor-images')
+            ->registerMediaConversions(function (Media $media) {
+                $this->addMediaConversion('thumb')
+                    ->width(400)
+                    ->height(300);
+                    
+                $this->addMediaConversion('medium')
+                    ->width(800)
+                    ->height(600);
+            });
     }
     
     /**

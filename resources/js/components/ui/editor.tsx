@@ -39,6 +39,7 @@ type EditorProps = {
 export function Editor({ value, onChange, placeholder = "Viết nội dung bài viết của bạn tại đây..." }: EditorProps) {
   const [linkUrl, setLinkUrl] = React.useState("");
   const [imageUrl, setImageUrl] = React.useState("");
+  const [fileInputKey, setFileInputKey] = React.useState<number>(0); // Add a key to reset file input
   
   const editor = useEditor({
     extensions: [
@@ -106,6 +107,9 @@ export function Editor({ value, onChange, placeholder = "Viết nội dung bài 
     const formData = new FormData();
     formData.append("image", file);
 
+    // Show loading state
+    console.log("Uploading image...");
+
     fetch(route('api.upload-image'), {
       method: "POST",
       body: formData,
@@ -113,10 +117,20 @@ export function Editor({ value, onChange, placeholder = "Viết nội dung bài 
         "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
       },
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
       .then((data) => {
         if (data.url) {
           editor.chain().focus().setImage({ src: data.url }).run();
+          console.log("Image uploaded successfully:", data.url);
+          // Reset the file input
+          setFileInputKey(prev => prev + 1);
+        } else {
+          console.error("No URL in response:", data);
         }
       })
       .catch((error) => {
@@ -312,12 +326,23 @@ export function Editor({ value, onChange, placeholder = "Viết nội dung bài 
                   <Button onClick={addImage} type="button">Áp dụng</Button>
                 </div>
                 <div className="flex flex-col gap-2">
-                  <span className="text-sm">hoặc tải lên từ máy tính</span>
-                  <Input 
-                    type="file" 
-                    accept="image/*"
-                    onChange={handleFileUpload}
-                  />
+                  <div className="text-sm font-medium">hoặc tải lên từ máy tính</div>
+                  <label 
+                    className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
+                  >
+                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                      <ImageIcon className="w-8 h-8 mb-2 text-gray-500" />
+                      <p className="mb-2 text-sm text-gray-500"><span className="font-semibold">Nhấp để tải lên</span></p>
+                      <p className="text-xs text-gray-500">PNG, JPG hoặc GIF (tối đa 10MB)</p>
+                    </div>
+                    <Input 
+                      type="file" 
+                      accept="image/*"
+                      onChange={handleFileUpload}
+                      key={fileInputKey}
+                      className="hidden"
+                    />
+                  </label>
                 </div>
               </div>
             </PopoverContent>

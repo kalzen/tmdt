@@ -55,7 +55,7 @@ return [
     /*
      * The path where media library files will be stored.
      */
-    'path_generator' => Spatie\MediaLibrary\Support\PathGenerator\DefaultPathGenerator::class,
+    'path_generator' => App\Support\MediaLibrary\PathGenerator\CustomPathGenerator::class,
 
     /*
      * The engine that should perform the image conversions.
