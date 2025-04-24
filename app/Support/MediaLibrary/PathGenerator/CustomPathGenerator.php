@@ -36,10 +36,9 @@ class CustomPathGenerator implements PathGenerator
      */
     protected function getBasePath(Media $media): string
     {
-        $collectionName = $media->collection_name ?? 'default';
-        
+        // Only use the media ID as the path, without the collection name
         return $media->getKey()
-            ? $collectionName . '/' . $media->getKey()
-            : $collectionName . '/' . time();
+            ? $media->getKey()
+            : time();
     }
 }
