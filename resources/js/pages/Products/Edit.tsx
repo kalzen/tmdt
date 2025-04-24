@@ -16,13 +16,21 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import HeadingSmall from '@/components/heading-small';
 import InputError from '@/components/input-error';
 import { type BreadcrumbItem } from '@/types';
-import { Trash2, XCircle } from 'lucide-react';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Trash2, XCircle, ChevronRight, ChevronDown } from 'lucide-react';
+import { Combobox, ComboboxOption } from '@/components/ui/combobox';
 
 interface Catalogue {
     id: number;
     name: string;
     level: number;
+    parent_id?: number | null;
+}
+
+interface CatalogueTreeItem {
+    id: number;
+    name: string;
+    level: number;
+    children: CatalogueTreeItem[];
 }
 
 interface Store {
@@ -77,6 +85,7 @@ interface ProductData {
 interface Props {
     product: ProductData;
     catalogues: Catalogue[];
+    catalogueTree: CatalogueTreeItem[]; // Add the hierarchical structure
     stores: Store[];
     attributes: Attribute[];
     productAttributes: Record<number, string>;
@@ -96,7 +105,94 @@ interface PageProps {
     [key: string]: any;
 }
 
-export default function EditProduct({ product, catalogues, stores, attributes, productAttributes }: Props) {
+// CatalogueTreeView component to render the hierarchical view
+const CatalogueTreeView: React.FC<{
+    items: CatalogueTreeItem[],
+    selectedIds: string[],
+    onSelect: (id: string, checked: boolean) => void,
+    primaryCatalogueId: string,
+    setPrimaryCatalogue: (id: string) => void
+}> = ({ items, selectedIds, onSelect, primaryCatalogueId, setPrimaryCatalogue }) => {
+    const [expanded, setExpanded] = useState<Record<number, boolean>>({});
+
+    const toggleExpand = (id: number) => {
+        setExpanded(prev => ({
+            ...prev,
+            [id]: !prev[id]
+        }));
+    };
+
+    const renderCatalogueItem = (item: CatalogueTreeItem, depth: number = 0) => {
+        const hasChildren = item.children && item.children.length > 0;
+        const isExpanded = expanded[item.id] || false;
+        const isSelected = selectedIds.includes(item.id.toString());
+        const isPrimary = primaryCatalogueId === item.id.toString();
+        
+        // Calculate padding based on depth
+        const paddingClass = depth === 0 ? '' : `pl-${depth * 6}`;
+
+        return (
+            <div key={item.id} className="catalogue-item">
+                <div className={`flex items-center py-1 ${paddingClass}`}>
+                    <div className="flex-shrink-0 w-6">
+                        {hasChildren ? (
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                className="p-0 h-5 w-5"
+                                onClick={() => toggleExpand(item.id)}
+                            >
+                                {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                            </Button>
+                        ) : null}
+                    </div>
+                    
+                    <div className="flex items-center space-x-2">
+                        <Checkbox
+                            id={`cat-${item.id}`}
+                            checked={isSelected}
+                            onCheckedChange={(checked) => onSelect(item.id.toString(), !!checked)}
+                        />
+                        <Label htmlFor={`cat-${item.id}`} className="cursor-pointer">
+                            {item.name}
+                        </Label>
+                        
+                        {isSelected && (
+                            <div className="ml-2">
+                                <input
+                                    type="radio"
+                                    id={`primary-${item.id}`}
+                                    name="primary_catalogue"
+                                    className="mr-1"
+                                    checked={isPrimary}
+                                    onChange={() => setPrimaryCatalogue(item.id.toString())}
+                                />
+                                <label htmlFor={`primary-${item.id}`} className="text-xs text-muted-foreground cursor-pointer">
+                                    Primary
+                                </label>
+                            </div>
+                        )}
+                    </div>
+                </div>
+                
+                {hasChildren && isExpanded && (
+                    <div className="catalogue-children ml-2">
+                        {item.children.map(child => renderCatalogueItem(child, depth + 1))}
+                    </div>
+                )}
+            </div>
+        );
+    };
+
+    return (
+        <div className="catalogue-tree">
+            {items.map(item => renderCatalogueItem(item))}
+        </div>
+    );
+};
+
+export default function EditProduct({ product, catalogues, catalogueTree, stores, attributes, productAttributes }: Props) {
     // Get auth information to check if user is admin
     const { auth } = usePage<PageProps>().props;
     const isAdmin = auth.user && auth.user.is_admin;
@@ -125,6 +221,8 @@ export default function EditProduct({ product, catalogues, stores, attributes, p
     const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
     const [existingGallery, setExistingGallery] = useState<GalleryImage[]>(product.gallery || []);
     const [editorContent, setEditorContent] = useState(product.content || '');
+    const [viewMode, setViewMode] = useState<'tree' | 'flat'>('tree'); // Add view mode state
+    const [expanded, setExpanded] = useState<Record<number, boolean>>({});
 
     useEffect(() => {
         if (productAttributes) {
@@ -145,6 +243,43 @@ export default function EditProduct({ product, catalogues, stores, attributes, p
             setData('attributes', initialAttributes);
         }
     }, [productAttributes]);
+
+    // Expand categories that contain selected items by default
+    useEffect(() => {
+        if (catalogueTree && data.catalogue_ids.length > 0) {
+            const expandedCategories: Record<number, boolean> = {};
+            
+            // Helper function to find selected items in the tree
+            const findSelectedInTree = (items: CatalogueTreeItem[]) => {
+                items.forEach(item => {
+                    // If this item is selected, expand its parent
+                    if (data.catalogue_ids.includes(item.id.toString())) {
+                        expandedCategories[item.id] = true;
+                    }
+                    
+                    // Check children recursively
+                    if (item.children && item.children.length > 0) {
+                        const hasSelectedChild = item.children.some(
+                            child => data.catalogue_ids.includes(child.id.toString()) ||
+                            (child.children && child.children.some(grandchild => 
+                                data.catalogue_ids.includes(grandchild.id.toString())
+                            ))
+                        );
+                        
+                        if (hasSelectedChild) {
+                            expandedCategories[item.id] = true;
+                        }
+                        
+                        findSelectedInTree(item.children);
+                    }
+                });
+            };
+            
+            findSelectedInTree(catalogueTree);
+            // Set expanded state
+            setExpanded(expandedCategories);
+        }
+    }, []);
 
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -217,6 +352,46 @@ export default function EditProduct({ product, catalogues, stores, attributes, p
         setGalleryFiles(newFiles);
         setData('gallery', newFiles);
     };
+
+    // Handle catalogue selection in tree view
+    const handleCatalogueSelect = (id: string, checked: boolean) => {
+        let newCatalogueIds = [...data.catalogue_ids];
+        
+        if (checked) {
+            newCatalogueIds.push(id);
+            if (data.catalogue_id === '') {
+                setData('catalogue_id', id);
+            }
+        } else {
+            newCatalogueIds = newCatalogueIds.filter(catId => catId !== id);
+            if (data.catalogue_id === id && newCatalogueIds.length > 0) {
+                setData('catalogue_id', newCatalogueIds[0]);
+            } else if (newCatalogueIds.length === 0) {
+                setData('catalogue_id', '');
+            }
+        }
+        
+        setData('catalogue_ids', newCatalogueIds);
+    };
+
+    // Set primary catalogue
+    const setPrimaryCatalogue = (id: string) => {
+        setData('catalogue_id', id);
+    };
+
+    // Convert stores to combobox options format
+    const storeOptions: ComboboxOption[] = stores.map(store => ({
+        value: store.id.toString(),
+        label: store.name
+    }));
+
+    // Add "None" option if there's more than one store and user is admin
+    if (isAdmin && stores.length > 1) {
+        storeOptions.unshift({
+            value: "",
+            label: __('admin.none', 'None')
+        });
+    }
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -310,39 +485,67 @@ export default function EditProduct({ product, catalogues, stores, attributes, p
                                     </div>
 
                                     <div className="grid gap-2">
-                                        <Label htmlFor="catalogue_id">{__('admin.catalogue', 'Catalogue')} <span className="text-destructive">*</span></Label>
-                                        <div className="border rounded-md p-4 max-h-[300px] overflow-y-auto">
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                                                {catalogues.map((cat) => (
-                                                    <div key={cat.id} className="flex items-center space-x-2">
-                                                        <Checkbox
-                                                            id={`catalogue-${cat.id}`}
-                                                            checked={data.catalogue_ids.includes(cat.id.toString())}
-                                                            onCheckedChange={(checked) => {
-                                                                const isChecked = !!checked;
-                                                                let newCatalogueIds = [...data.catalogue_ids];
-
-                                                                if (isChecked) {
-                                                                    newCatalogueIds.push(cat.id.toString());
-                                                                    if (data.catalogue_id === '') {
-                                                                        setData('catalogue_id', cat.id.toString());
-                                                                    }
-                                                                } else {
-                                                                    newCatalogueIds = newCatalogueIds.filter(id => id !== cat.id.toString());
-                                                                    if (data.catalogue_id === cat.id.toString() && newCatalogueIds.length > 0) {
-                                                                        setData('catalogue_id', newCatalogueIds[0]);
-                                                                    } else if (newCatalogueIds.length === 0) {
-                                                                        setData('catalogue_id', '');
-                                                                    }
-                                                                }
-
-                                                                setData('catalogue_ids', newCatalogueIds);
-                                                            }}
-                                                        />
-                                                        <Label htmlFor={`catalogue-${cat.id}`}>{cat.name}</Label>
-                                                    </div>
-                                                ))}
+                                        <div className="flex items-center justify-between">
+                                            <Label htmlFor="catalogue_id">{__('admin.catalogue', 'Catalogue')} <span className="text-destructive">*</span></Label>
+                                            <div className="flex items-center gap-2 text-sm">
+                                                <button 
+                                                    type="button"
+                                                    className={`px-2 py-1 rounded ${viewMode === 'tree' ? 'bg-primary text-white' : 'bg-muted'}`}
+                                                    onClick={() => setViewMode('tree')}
+                                                >
+                                                    Tree View
+                                                </button>
+                                                <button 
+                                                    type="button"
+                                                    className={`px-2 py-1 rounded ${viewMode === 'flat' ? 'bg-primary text-white' : 'bg-muted'}`}
+                                                    onClick={() => setViewMode('flat')}
+                                                >
+                                                    Flat View
+                                                </button>
                                             </div>
+                                        </div>
+                                        
+                                        <div className="border rounded-md p-4 max-h-[300px] overflow-y-auto">
+                                            {viewMode === 'tree' ? (
+                                                <CatalogueTreeView
+                                                    items={catalogueTree}
+                                                    selectedIds={data.catalogue_ids}
+                                                    onSelect={handleCatalogueSelect}
+                                                    primaryCatalogueId={data.catalogue_id}
+                                                    setPrimaryCatalogue={setPrimaryCatalogue}
+                                                />
+                                            ) : (
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                                    {catalogues.map((cat) => (
+                                                        <div key={cat.id} className="flex items-center space-x-2">
+                                                            <Checkbox
+                                                                id={`catalogue-${cat.id}`}
+                                                                checked={data.catalogue_ids.includes(cat.id.toString())}
+                                                                onCheckedChange={(checked) => {
+                                                                    handleCatalogueSelect(cat.id.toString(), !!checked);
+                                                                }}
+                                                            />
+                                                            <Label htmlFor={`catalogue-${cat.id}`}>{cat.name}</Label>
+                                                            
+                                                            {data.catalogue_ids.includes(cat.id.toString()) && (
+                                                                <div className="ml-2">
+                                                                    <input
+                                                                        type="radio"
+                                                                        id={`primary-${cat.id}`}
+                                                                        name="primary_catalogue"
+                                                                        className="mr-1"
+                                                                        checked={data.catalogue_id === cat.id.toString()}
+                                                                        onChange={() => setPrimaryCatalogue(cat.id.toString())}
+                                                                    />
+                                                                    <label htmlFor={`primary-${cat.id}`} className="text-xs text-muted-foreground">
+                                                                        Primary
+                                                                    </label>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
                                         </div>
                                         <div className="text-sm text-muted-foreground">
                                             {__('admin.select_multiple_catalogues', 'Select one or more catalogues for this product')}
@@ -353,35 +556,15 @@ export default function EditProduct({ product, catalogues, stores, attributes, p
                                     {stores.length > 0 && (
                                         <div className="grid gap-2">
                                             <Label htmlFor="store_id">{__('admin.store', 'Store')}</Label>
-                                            <DropdownMenu>
-                                                <DropdownMenuTrigger asChild>
-                                                    <Button variant="outline" className="w-full justify-between" disabled={!isAdmin && stores.length === 1}>
-                                                        {data.store_id
-                                                            ? stores.find(s => s.id.toString() === data.store_id)?.name
-                                                            : __('admin.select_store', 'Select store')}
-                                                        <svg className="h-4 w-4 opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                                            <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
-                                                        </svg>
-                                                    </Button>
-                                                </DropdownMenuTrigger>
-                                                {isAdmin && (
-                                                    <DropdownMenuContent align="center" className="w-[300px]">
-                                                        {stores.length > 1 && (
-                                                            <DropdownMenuItem onClick={() => setData('store_id', '')}>
-                                                                {__('admin.none', 'None')}
-                                                            </DropdownMenuItem>
-                                                        )}
-                                                        {stores.map((store) => (
-                                                            <DropdownMenuItem
-                                                                key={store.id}
-                                                                onClick={() => setData('store_id', store.id.toString())}
-                                                            >
-                                                                {store.name}
-                                                            </DropdownMenuItem>
-                                                        ))}
-                                                    </DropdownMenuContent>
-                                                )}
-                                            </DropdownMenu>
+                                            <Combobox
+                                                options={storeOptions}
+                                                value={data.store_id}
+                                                onChange={(value) => setData('store_id', value)}
+                                                placeholder={__('admin.select_store', 'Select store')}
+                                                emptyMessage={__('admin.no_stores_found', 'No stores found')}
+                                                className="w-full"
+                                                disabled={!isAdmin || stores.length === 1}
+                                            />
                                             {!isAdmin && stores.length === 1 && (
                                                 <p className="text-sm text-muted-foreground">
                                                     {__('admin.store_fixed', 'Products can only be assigned to your store')}

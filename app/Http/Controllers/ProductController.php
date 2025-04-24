@@ -98,18 +98,52 @@ class ProductController extends Controller
      */
     public function create()
     {
-        // Danh sách danh mục cho dropdown
-        $catalogues = Catalogue::select('id', 'name', 'parent_id', 'level')
-            ->orderBy('level', 'asc')
-            ->orderBy('name', 'asc')
+        // Fetch only top-level categories and their children
+        $rootCatalogues = Catalogue::whereNull('parent_id')
+            ->where('is_active', true)
+            ->with(['children' => function($query) {
+                $query->where('is_active', true)
+                    ->with(['children' => function($q) {
+                        $q->where('is_active', true);
+                    }]);
+            }])
+            ->orderBy('position')
             ->get()
             ->map(function ($catalogue) {
-                // Tạo tên hiển thị với indent cho cấp độ
+                return [
+                    'id' => $catalogue->id,
+                    'name' => $catalogue->name,
+                    'level' => 0,
+                    'children' => $catalogue->children->map(function ($child) {
+                        return [
+                            'id' => $child->id,
+                            'name' => $child->name,
+                            'level' => 1,
+                            'children' => $child->children->map(function ($grandChild) {
+                                return [
+                                    'id' => $grandChild->id,
+                                    'name' => $grandChild->name,
+                                    'level' => 2,
+                                ];
+                            }),
+                        ];
+                    }),
+                ];
+            });
+            
+        // For compatibility with existing code, also create a flat list
+        $allCatalogues = Catalogue::select('id', 'name', 'parent_id', 'level')
+            ->where('is_active', true)
+            ->orderBy('level')
+            ->orderBy('name')
+            ->get()
+            ->map(function ($catalogue) {
                 $levelIndicator = $catalogue->level > 0 ? str_repeat('—', $catalogue->level) . ' ' : '';
                 return [
                     'id' => $catalogue->id,
                     'name' => $levelIndicator . $catalogue->name,
                     'level' => $catalogue->level,
+                    'parent_id' => $catalogue->parent_id,
                 ];
             });
             
@@ -134,7 +168,8 @@ class ProductController extends Controller
             ->get();
             
         return Inertia::render('Products/Create', [
-            'catalogues' => $catalogues,
+            'catalogues' => $allCatalogues,
+            'catalogueTree' => $rootCatalogues,
             'stores' => $stores,
             'attributes' => $attributes,
             'defaultStoreId' => $defaultStoreId,
@@ -318,8 +353,42 @@ class ProductController extends Controller
             }
         }
 
-        // Danh sách danh mục cho dropdown
-        $catalogues = Catalogue::select('id', 'name', 'parent_id', 'level')
+        // Fetch only top-level categories and their children
+        $rootCatalogues = Catalogue::whereNull('parent_id')
+            ->where('is_active', true)
+            ->with(['children' => function($query) {
+                $query->where('is_active', true)
+                    ->with(['children' => function($q) {
+                        $q->where('is_active', true);
+                    }]);
+            }])
+            ->orderBy('position')
+            ->get()
+            ->map(function ($catalogue) {
+                return [
+                    'id' => $catalogue->id,
+                    'name' => $catalogue->name,
+                    'level' => 0,
+                    'children' => $catalogue->children->map(function ($child) {
+                        return [
+                            'id' => $child->id,
+                            'name' => $child->name,
+                            'level' => 1,
+                            'children' => $child->children->map(function ($grandChild) {
+                                return [
+                                    'id' => $grandChild->id,
+                                    'name' => $grandChild->name,
+                                    'level' => 2,
+                                ];
+                            }),
+                        ];
+                    }),
+                ];
+            });
+            
+        // For compatibility, also include the flattened list
+        $allCatalogues = Catalogue::select('id', 'name', 'parent_id', 'level')
+            ->where('is_active', true)
             ->orderBy('level', 'asc')
             ->orderBy('name', 'asc')
             ->get()
@@ -330,6 +399,7 @@ class ProductController extends Controller
                     'id' => $catalogue->id,
                     'name' => $levelIndicator . $catalogue->name,
                     'level' => $catalogue->level,
+                    'parent_id' => $catalogue->parent_id,
                 ];
             });
             
@@ -377,7 +447,8 @@ class ProductController extends Controller
                 'gallery' => $gallery,
                 'catalogues' => $product->catalogues()->select('catalogues.id', 'name', 'level')->get(), // Fix the column ambiguity by specifying the table name
             ]),
-            'catalogues' => $catalogues,
+            'catalogues' => $allCatalogues,
+            'catalogueTree' => $rootCatalogues,
             'stores' => $stores,
             'attributes' => $attributes,
             'productAttributes' => $productAttributes,
